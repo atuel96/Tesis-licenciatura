@@ -1,0 +1,114 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \documentclass[12pt,papel,twoside]{ibtesis}
+\documentclass[12pt,screen,twoside,pagebackref]{ibtesis}
+% \documentclass[12pt,papel,singlespace,oneside]{ibtesis}
+% \documentclass[12pt,papel,preprint,singlespace,oneside]{ibtesis}
+
+
+%%%%%%%%%%%%%%%%%%%%% Paquetes extra %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Por conveniencia: aqu\'{\i} puede cargar todos los paquetes y definir los comandos 
+% que necesite
+\usepackage{ibextra}
+%\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{amsfonts}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+\usepackage{graphicx}
+\usepackage{bm}
+
+%\includeonly{datos_utilizados, hp_greedy}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+\floatname{algorithm}{Algoritmo}
+
+%%%%%%%%%%%%%%%%%%%%% Informacion sobre la tesis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Criterios b\'{a}sicos para la presentaci\'{o}n de la tesis en el Instituto Balseiro Tanto de doctorado como de maestr\'{\i}a}
+\author{J. Autor}
+\director{Dr.~J.~Director}
+\codirector{Dr.~J.~Otro m\'{a}s}
+\carrera{Tesis Carrera de Doctorado en F\'{\i}sica}
+\grado{Doctorando}
+\laboratorio{Colisiones At\'{o}micas -- Centro At\'{o}mico Bariloche}
+\jurado{Dr.~J.~J.~Jurado (Instituto Balseiro) \\ 
+Dr.~Segundo Jurado (Universidad Nacional de Cuyo)\\ 
+Dr.~J.~Otro Jurado (Univ. Nac. de LaCalle)\\
+Dr.~J.~L\'{o}pez Jurado (Univ. Nac. de Mar del Plata)\\
+Dr.~U.~Amigo (Instituto Balseiro, Centro At\'{o}mico Bariloche)}
+\palabrasclave{formato de Tesis, Lineamientos de escritura, Instituto Balseiro}
+\keywords{Thesis format, Templates, Instituto Balseiro}
+% Si queremos poner la fecha manualmente:
+% \date{Diciembre de 2099}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\titlepagefalse % Si no quiere compilar la portada descomente esta linea
+%\includeonly{apendices} % Compilar s\'{o}lo estos archivos 
+\graphicspath{{figs/}} % Lugar donde encontrar las figuras generales (se puede poner uno en cada cap{\'{\i}}tulo)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+% Dentro del environment 'preliminary' va:
+% la dedicatoria, resumen, abstract, indices
+
+\begin{preliminary}
+
+% Escriba su dedicatoria
+\dedicatoria{
+A mi familia\\
+A mis amigos\\
+A todos los que me conocen\\
+A toda esa otra gente que no
+}
+
+%%% \'{I}ndices %%%%
+
+\begin{abreviaturas}
+                                %Abreviaturas
+\end{abreviaturas}
+
+\tableofcontents                %\'{I}ndice
+
+%\listoffigures                  %Figuras
+
+%\listoftables                   %Tablas
+
+\include{resumen}
+
+\end{preliminary}
+
+
+% Podemos usar cualquiera de los dos comandos: \input o \include para incluir el texto
+
+\include{marco teorico}
+\include{datos_utilizados}
+\include{hp_greedy}
+\include{optimizacion}
+
+\appendix
+%\include{apend1}
+
+\begin{biblio}
+\bibliography{mibib}
+\end{biblio}
+
+
+\begin{postliminary}
+
+\begin{seccion}{Publicaciones asociadas}
+  \begin{enumerate}
+  \item Mi primer aviso en la revista \textbf{ABC}, 1996
+  \item Mi segunda publicaci\'{o}n en la revista \textbf{ABC}, 1997
+  \end{enumerate}
+\end{seccion}
+
+\begin{seccion}{Agradecimientos}
+A todos los que se lo merecen, por merecerlo
+\end{seccion}
+
+\end{postliminary}
+
+\end{document}
+
