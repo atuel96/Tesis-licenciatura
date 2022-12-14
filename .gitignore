@@ -1,12 +1,12 @@
 # gitignore
 
-.aux
-.log
-.bbl
-.blg
-.brf
-.lof
-.lot
-.out
-.gz
-.toc
+*.aux
+*.log
+*.bbl
+*.blg
+*.brf
+*.lof
+*.lot
+*.out
+*.gz
+*.toc

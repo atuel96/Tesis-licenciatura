@@ -65,12 +65,15 @@ Si bien no se puede graficar el error en función de los tres hiperparámetros a
 Luego, en la figura \ref{fig:grid_3_seeds} se observa el error de validación en función de las combinaciones posibles de  $n_{max}$ y $l_{max}$ para tres diferentes semillas. A la derecha, con $q_0=8$ se observa el mejor error de representación obtenido en la búsqueda exhaustiva, con un valor de $4\times10^{-30}$ (el cual se obtuvo para 16 combinaciones de hiperparámetros), casi 15 ordenes de magnitud menor que el siguiente mejor error.
 
 
-\subsection{Optimización Secuencial Basada en Modelos (SMBO)}
+\subsection{Optimización Bayesiana}
 
 
-La optimización secuencial basada en modelos es un formalismo que es útil para explicar de manera general el funcionamiento de la optimización bayesiana.
+La optimización bayesiana es un método que utiliza la información de todas las evaluaciones realizadas de la función $f$ para decidir que valor de $\textbf{x}$ evaluar a continuación, reduciendo así el número necesario de evaluaciones de $f$ para encontrar el mínimo.
 
-La ventaja de este método es que cada evaluación de la función $f$ se decide en base al conjunto $D$ de observaciones realizadas previamente. Esto se logra entrenando un modelo sustituto $\mathcal{M}$ en base al conjunto $D$, y luego utilizando una función $S$ llamada función de \textit{adquisición}, que decidirá el mejor punto a evaluar en la función real.
+Para explicar como funciona este método se parte de un formalismo llamado \textbf{optimización secuencial basada en modelos}, que no es más que una generalización de la optimización bayesiana.
+
+
+En la optimización secuencial basada en modelos cada evaluación de la función $f$ se decide en base al conjunto $D$ de observaciones realizadas previamente. Esto se logra entrenando un modelo sustituto $\mathcal{M}$ en base al conjunto $D$, y luego utilizando una función $S$ llamada función de \textit{adquisición}, que decidirá el mejor punto a evaluar en la función real.
 
 Se parte de un conjunto $D$ generado a partir de un muestreo de observaciones de la función $f$ de la forma $(\textbf{x}_j, f(\textbf{x}_j))$, a partir del cual se ajusta el modelo sustituto $\mathcal{M}$. Luego, maximizando la función de adquisición $S$ se elije el siguiente conjunto de hiperparámetros $\textbf{x}_i$ para evaluar la función $f$ y se agrega el par $(\textbf{x}_i, f(\textbf{x}_i))$ al conjunto de observaciones $D$. Una vez hecho esto se vuelve a ajustar el modelo $\mathcal{M}$ y se repite el proceso, que está explicado en forma de pseudocódigo en el algoritmo \ref{alg:SMBO}.
 
@@ -96,8 +99,6 @@ Se parte de un conjunto $D$ generado a partir de un muestreo de observaciones de
 
 
 
-\subsection{Optimización Bayesiana}
-
 Lo que caracteriza a la optimización bayesiana dentro del formalismo de la optimización secuencial basada en modelos, es justamente la creación del modelo.
 En la optimización bayesiana se construye un modelo estadístico, donde se representa con  $P(y|\textbf{x})$ la predicción del modelo, siendo $y$ el resultado de una evaluación $f(\textbf{x})$. El nombre del método se debe a que para la construcción del modelo se utiliza el teorema de Bayes:
   
@@ -110,24 +111,22 @@ En la optimización bayesiana se construye un modelo estadístico, donde se repr
  
  TPE \cite{NIPS2011_86e8f7ab}
  
- graph \cite{Feurer2019}
+
  
  
 \begin{figure}[h!]
 \centering
 \includegraphics[width=.7\columnwidth]{bayesian.png}
-\caption{Máximo error de validación en función de $n_{max}$ y $l_{max}$ para tres diferentes semillas $q_0$. \cite{Feurer2019} }
+\caption{caption \cite{Feurer2019} }
 \label{fig:bayesian}
 \end{figure}
 
- Optimización 1D 
 
- Comparación
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=.9\columnwidth, trim={1cm, 1cm, 1cm, 1.1cm}]{opt_1d_value.pdf}
-\caption{Máximo error de validación en función de $n_{max}$ y $l_{max}$ para tres diferentes semillas $q_0$. }
+\caption{caption }
 \label{fig:optuna_1_value}
 \end{figure}
 
@@ -136,33 +135,26 @@ En la optimización bayesiana se construye un modelo estadístico, donde se repr
 \begin{figure}[h!]
 \centering
 \includegraphics[width=1.05\columnwidth, trim={10cm, 1cm, 10cm, 1.1cm}]{opt_1d_params.pdf}
-\caption{Máximo error de validación en función de $n_{max}$ y $l_{max}$ para tres diferentes semillas $q_0$. }
+\caption{cption }
 \label{fig:optuna_1_params}
 \end{figure}
 
 
 
-\subsection{Semilla 1D}
-
-
-
-\subsection{Semilla 2D}
+\begin{figure}[p!]
+\centering
+\includegraphics[width=1\columnwidth, trim={6cm, 5cm, 12cm, 5cm}]{Optuna_2D_noepsilon.pdf}
+\caption{caption }
+\label{fig:optuna_2d}
+\end{figure}
 
 \begin{figure}[p!]
 \centering
 \includegraphics[width=1\columnwidth, trim={6cm, 5cm, 12cm, 5cm}]{Optuna_2D.pdf}
-\caption{Máximo error de validación en función de $n_{max}$ y $l_{max}$ para tres diferentes semillas $q_0$. }
+\caption{caption }
 \label{fig:optuna_2d}
 \end{figure}
 
-2D optimización semilla grid search
 
- 2D optimización semilla optune
-
- comparación
-
- Full optimización 2D
-
- optimización con tiempo
 
 \subsection{Importancia de los Hiperparámetros}
