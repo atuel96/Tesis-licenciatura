@@ -67,6 +67,12 @@ Luego, en la figura \ref{fig:grid_3_seeds} se observa el error de validación en
 
 \subsection{Optimización Bayesiana}
 
+\begin{figure}[h!]
+\centering
+\includegraphics[width=.7\columnwidth]{bayesian.png}
+\caption{En la figura se observan tres iteraciones de una optimización bayesiana para una función sencilla con parámetro unidimensional. En linea punteada está representada la función real, mientras que con linea gruesa se representa el valor medio del modelo estadístico (en este caso construido utilizando procesos gaussianos). El área pintada en azul representa la incertidumbre del modelo, que tiende a cero en los puntos que representan las observaciones realizadas. Debajo se puede ver una función de adquisición en color naranja, que indica el siguiente punto a evaluar \cite{Feurer2019}.}
+\label{fig:bayesian}
+\end{figure}
 
 La optimización bayesiana es un método que utiliza la información de todas las evaluaciones realizadas de la función $f$ para decidir que valor de $\textbf{x}$ evaluar a continuación, reduciendo así el número necesario de evaluaciones de $f$ para encontrar el mínimo.
 
@@ -97,8 +103,6 @@ Se parte de un conjunto $D$ generado a partir de un muestreo de observaciones de
 \end{algorithm}
 
 
-
-
 Lo que caracteriza a la optimización bayesiana dentro del formalismo de la optimización secuencial basada en modelos, es justamente la creación del modelo.
 En la optimización bayesiana se construye un modelo estadístico, donde se representa con  $P(y|\textbf{x})$ la predicción del modelo, siendo $y$ el resultado de una evaluación $f(\textbf{x})$. El nombre del método se debe a que para la construcción del modelo se utiliza el teorema de Bayes:
   
@@ -106,20 +110,60 @@ En la optimización bayesiana se construye un modelo estadístico, donde se repr
  P(y|\textbf{x}) = \frac{P(\textbf{x}|y) \ P(y)}{P(\textbf{x})}
  \]
  
- En la terminología bayesiana, se conoce a $P(y|\textbf{x})$ como probabilidad a posteriorí o \textit{posterior}, que es proporcional a la probabilidad a priori o \textit{prior} $P(y)$ por la función de verosimilitud o \textit{likelihood} $P(\textbf{x}|y)$.
- 
- 
- TPE \cite{NIPS2011_86e8f7ab}
- 
+ En la terminología bayesiana, se conoce a $P(y|\textbf{x})$ como probabilidad a posteriorí o \textit{posterior}, que es proporcional a la probabilidad a priori o \textit{prior} $P(y)$ por la función de verosimilitud o \textit{likelihood} $P(\textbf{x}|y)$. La probabilidad $P(\textbf{x})$ es una probabilidad marginal que sirve como factor de normalización, por lo que no es realmente relevante a la hora de encontrar valores extremos.
 
- 
- 
+
+\subsubsection*{Procesos Gaussianos}
+
 \begin{figure}[h!]
 \centering
-\includegraphics[width=.7\columnwidth]{bayesian.png}
-\caption{caption \cite{Feurer2019} }
-\label{fig:bayesian}
+\includegraphics[width=.8\columnwidth]{gaussian.png}
+\caption{Proceso Gaussiano unidimensional con tres observaciones representadas por los puntos negros. La linea gruesa representa la media del modelo predictivo y la zona azul la varianza en cada caso. Se representa con linea de trazo las distribuciones normales para los valores $x_1, x_2,$ y $x_3$\cite{https://doi.org/10.48550/arxiv.1012.2599}.}
+\label{fig:gaussian}
 \end{figure}
+
+Una opción muy utilizada para la construcción del \textit{prior} y actualización del \textit{posterior} son los procesos gaussianos. Una forma sencilla de entender un proceso gaussiano es pensarlo como una función que para cada valor de $x$ devuelve la media $\mu(x)$ y la varianza $\sigma(x)$ de una distribución normal, en el caso particular de que $x$ sea unidimensional (ver figura \ref{fig:gaussian}). Con $\textbf{x}$ multidimensional, se obtiene una distribución normal multivariable, caracterizada por el vector $\bm{\mu}(\textbf{x})$ y la matriz de covarianza $\Sigma(\textbf{x}, \textbf{x}')$.
+
+Sin embargo en este trabajo no se utilizan procesos gaussianos, principalmente porque parten del supuesto de que $f$ es continua. Para una introducción a la optimización bayesiana con procesos gaussianos ver \cite{https://doi.org/10.48550/arxiv.1012.2599}.
+
+\subsubsection*{Estimador de Parzen con Estructura Arbórea} 
+ 
+ 
+ El estimador de Parzen con estructura arbórea o \textbf{TPE} (\textit{Tree-Structured Parzen Estimator}) \cite{NIPS2011_86e8f7ab} es una estrategia que modela el \textit{prior} $P(y)$ a partir de densidades no paramétricas según el espacio de búsqueda, que en este caso son intervalos discretos. 
+ 
+Por otro lado se modela $P(\textbf{x}|y)$ con dos distribuciones creadas a partir de las observaciones $D$ (de aquí el nombre de estructura arbórea):
+
+\begin{equation}
+P(\textbf{x}|y) =
+	\begin{cases}
+		\ell (x) & \text{si } y <y^{*} \\
+		g(x) & \text{si } y \geq y^{*},
+	\end{cases}
+\end{equation}
+
+con $y^{*}$ un valor por encima del mejor valor observado de $f(\textbf{x}9$, que se elije a partir de una fracción $\gamma$ de los valores observados $y$ tal que $P(y<y^{*}) = \gamma$.
+ 
+\subsubsection*{Mejora Esperada: Función De Adquisición} 
+ 
+%Debido a que la función $f$ no será necesariamente convexa, y seguramente tendrá varios mínimos locales, es necesario mantener un equilibrio entre la explotación y la exploración, es decir, explorar los mínimos tentativos sin dejar de lado las zonas inexploradas, en donde podría haber algún mínimo por descubrir. De esto se encarga la función de adquisición.
+Para la elección de los puntos a evaluar en la función real se maximiza la función de adquisición $S$. Existen varias propuestas de funciones de adquisición, pero en este caso se utiliza la \textbf{mejora esperada} o EI(\textit{Expected Improvement}) \cite{EI1}. Sea $y^*$ un valor de referencia, se define a la mejora con respecto a $y^*$ como
+
+\begin{equation}
+I_{y^*}(\textbf{x}) = \max(y^*-y,0),
+\end{equation}
+
+Por lo tanto, la mejora esperada se obtiene calculando la media de $I_{y^*}(\textbf{x})$
+
+\begin{equation}
+EI_{y^*}(\textbf{x}) = E[\max(y^*-y,0)]= \int_{-\infty}^{\infty} \max(y^*-y,0) p(y|\textbf{x}) \ dy
+\end{equation}
+ 
+[Seguir con el resultado de EI aplicado al TPE]
+ 
+
+
+ 
+
 
 
 
