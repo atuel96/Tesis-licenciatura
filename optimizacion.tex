@@ -45,7 +45,7 @@ La optimización bayesiana es un método que utiliza la información de todas la
 
 Para explicar como funciona este método se parte de un formalismo llamado optimización secuencial basada en modelos, que no es más que una generalización de la optimización bayesiana.
 
-\subsection*{Optimización Secuencial Basada en Modelos}
+\subsection{Optimización Secuencial Basada en Modelos}
 
 La idea es aproximar la función $f$ a partir de un modelo sustituto $\mathcal{M}$.
 
@@ -83,10 +83,10 @@ En la optimización bayesiana se construye un modelo estadístico, donde se repr
  P(y|\textbf{x}) = \frac{P(\textbf{x}|y) \ P(y)}{P(\textbf{x})}
  \]
  
- En la terminología bayesiana, se conoce a $P(y|\textbf{x})$ como probabilidad a posteriorí o \textit{posterior}, que es proporcional a la probabilidad a priori o \textit{prior} $P(y)$ por la función de verosimilitud o \textit{likelihood} $P(\textbf{x}|y)$. La probabilidad $P(\textbf{x})$ es una probabilidad marginal que sirve como factor de normalización, por lo que no es realmente relevante a la hora de encontrar valores extremos.
+ En la terminología bayesiana, se conoce a $P(y|\textbf{x})$ como probabilidad a posteriorí o \textit{posterior}, que es proporcional a la probabilidad a priori o \textit{prior} $P(y)$ por la función de verosimilitud o \textit{likelihood} $P(\textbf{x}|y)$. La probabilidad $P(\textbf{x})$ es una probabilidad marginal que sirve como factor de normalización, por lo que no es de tanto interés.
 
 
-\subsection*{Procesos Gaussianos}
+\subsubsection*{Procesos Gaussianos}
 
 \begin{figure}[h!]
 \centering
@@ -99,23 +99,6 @@ Una opción muy utilizada para la construcción del \textit{prior} y actualizaci
 
 Sin embargo en este trabajo no se utilizan procesos gaussianos, principalmente porque parten del supuesto de que $f$ es continua. Para una introducción a la optimización bayesiana con procesos gaussianos ver \cite{https://doi.org/10.48550/arxiv.1012.2599}.
 
-\subsection{Estimador de Parzen con Estructura Arbórea} 
- 
- 
- El estimador de Parzen con estructura arbórea o \textbf{TPE} (\textit{Tree-Structured Parzen Estimator}) \cite{NIPS2011_86e8f7ab} es una estrategia que modela el \textit{prior} $P(y)$ a partir de densidades no paramétricas según el espacio de búsqueda, que en este caso son intervalos discretos. 
- 
-Por otro lado se modela $P(\textbf{x}|y)$ con dos distribuciones creadas a partir de las observaciones $D$ (de aquí el nombre de estructura arbórea):
-
-\begin{equation}
-P(\textbf{x}|y) =
-	\begin{cases}
-		\ell (x) & \text{si } y <y^{*} \\
-		g(x) & \text{si } y \geq y^{*},
-	\end{cases}
-\end{equation}
-
-con $y^{*}$ un valor por encima del mejor valor observado de $f(\textbf{x})$, que se selecciona para ser un cuantil $\gamma \in (0,1)$ de los valores observados $y$ 	 que $P(y<y^{*}) = \gamma$.
- 
 \subsection{Mejora Esperada: Función De Adquisición} 
  
 %Debido a que la función $f$ no será necesariamente convexa, y seguramente tendrá varios mínimos locales, es necesario mantener un equilibrio entre la explotación y la exploración, es decir, explorar los mínimos tentativos sin dejar de lado las zonas inexploradas, en donde podría haber algún mínimo por descubrir. De esto se encarga la función de adquisición.
@@ -123,14 +106,83 @@ Para la elección de los puntos a evaluar en la función real se maximiza la fun
 
 
 \begin{equation}
-EI_{y^*}(\textbf{x}) = \int_{-\infty}^{\infty} \max(y^*-y,0) p(y|\textbf{x}) \ dy
+\label{eq:ei_def}
+EI_{y^*}(\textbf{x}) := \int_{-\infty}^{\infty} \max(y^*-y,0) p(y|\textbf{x}) \ dy
 \end{equation}
  
-[Seguir con el resultado de EI aplicado al TPE]
+
+\subsection{Estimador de Parzen con Estructura Arbórea} 
+
+ El estimador de Parzen con estructura arbórea o \textbf{TPE} (\textit{Tree-Structured Parzen Estimator}) \cite{NIPS2011_86e8f7ab} es una estrategia que modela $P(x_i|y)$ para cada $x_i \in X_i$ (es decir, que $x_i$ representa a cada hiperparámetro por separado) a partir de dos distribuciones creadas a utilizando las observaciones $D$:
+
+\begin{equation}
+\label{eq:tpe}
+P(x_i|y) =
+	\begin{cases}
+		\ell (x_i) & \text{si } y <y^{*} \\
+		g(x_i) & \text{si } y \geq y^{*},
+	\end{cases}
+\end{equation}
+
+
+Donde las densidades $\ell(x_i)$ y $g(x_i)$ se construyen a partir de dos conjuntos $D_{\ell}$ y $D_g$, ambos subconjuntos de $D$, tal que $D_{\ell}$ contiene todas las observaciones con $y < y^*$, y $D_g$ contiene a todo el resto de forma que $D = D_{\ell} + D_g$. El valor de referencia $y^{*}$ será un valor por encima del mejor valor observado de $f(\textbf{x})$, que se selecciona para ser un cuantil $\gamma \in (0,1)$ de los valores observados $y$ tal que $P(y<y^{*}) = \gamma$.
+
+
+\subsubsection*{Mejora Esperada con TPE}
+Aplicando la ecuación \eqref{eq:tpe} a la definición de mejora esperada \eqref{eq:ei_def} se obtiene la siguiente relación \cite{NIPS2011_86e8f7ab}:
+
+\begin{equation}
+EI_{y^*}(x_i) \propto \left( \gamma + (1-\gamma) \frac{g(x_i)}{\ell (x_i)} \right)^{-1}
+\end{equation}
+
+Es decir que para maximizar la mejora esperada se debe escoger un valor $x_i$ que maximice el cociente $\ell(x_i)/g(x_i)$ (o minimice $g(x_i)/\ell(x_i)$).
+
+\subsubsection*{Estimación de las Densidades}
+
+Las densidades de probabilidad se estiman utilizando ventanas de Parzen. Sea $D_x = \{x_i \ | \ (\textbf{x}, y) \in D_{\ell} \ (o\ D_g) \}$:
+
+\begin{equation}
+P(x_i) = \frac{\sum_{x_i'\in D_x}w_{x_i'}k(x_i, x_i') + w_p k(x_i, x_p) }{\sum_{x_i'\in D_x}w_{x_i'}+w_p},
+\end{equation}
  
 
+donde $w_{x_i'}$ es el peso de la observación $x_i'$(ver \cite{https://doi.org/10.48550/arxiv.1209.5111}), $x_p$ es un valor fijo \textit{prior}, $w_p$ es un peso \textit{prior} (por defecto igual a $1$) y $k$ es la función \textit{kernel}, que en este caso son distribuciones gaussianas truncadas centradas en los puntos $x_i'$ (ver \cite{10.1145/3377930.3389817} para más detalle).
+
 %LEER https://tech.preferred.jp/en/blog/multivariate-tpe-makes-optuna-even-more-powerful/ !!!
- 
+
+\subsection*{Algoritmo}
+
+Finalmente se puede ver el procedimiento completo del estimador de Parzen con estructura arbórea en el algoritmo \ref{alg:TPE}. Un detalle importante es que el algoritmo requiere un valor $n_c$, que es el número de candidatos que se utilizarán para maximizar el cociente $\ell(x_i)/g(x_i)$ (es decir, para maximizar la función de adquisición). En la linea 6 del algoritmo se realiza el muestro de los $n_c$ candidatos, utilizando la distribución $\ell(x_i)$, para luego seleccionar $x_i^*$ a partir del conjunto $C_i$.
+Para este trabajo se utilizó la implementación de este algoritmo realizada en el paquete \textbf{\textit{Optuna}} \cite{optuna_2019} escrito en el lenguaje de programación Python.
+
+\begin{algorithm}
+\caption{\texttt{TPE}}
+\label{alg:TPE}
+\begin{algorithmic}[1]
+\Require
+\begin{tabular}{c}
+$D = \{(\textbf{x}^{(1)},y^{(1)}), \cdots, (\textbf{x}^{(k)},y^{(k)}) \}$ \Comment{Observaciones}  \\ 
+$n_t \in \mathbb{N}$ \Comment{número de iteraciones} \\ 
+$n_c \in \mathbb{N}$ \Comment{número de candidatos} \\
+$\gamma \in (0,1) $ \Comment{cuantil para obtener $y^*$}
+\end{tabular} 
+
+\vspace{1mm}
+\For{$t = 1, 2, ..., n_t$}
+	\State $D_{\ell} = \{ (\textbf{x}, y) \in D | y < y^*, \ \text{con } P(y<y^*) = \gamma  \}$
+	\State $D_g = D - D_{\ell}$
+	\For{$x_i = n_{max}, l_{max}, \varepsilon ,...$} \Comment{Para cada hiperparámetro}
+		\State Construir $\ell(x_i)$ con $\{x_i \ | \ (\textbf{x}, y) \in D_{\ell}\}$ y $g(x_i)$ con $\{x_i \ | \ (\textbf{x}, y) \in D_g \}$.
+		\State $C_i = \{ x_i^{(j)} \sim \ell(x_i)| j=1, ..., n_c \}$ \Comment{muestreo de $n_c$ candidatos para $x_i^*$}
+		\State $x_{i}^* = arg \max_{x_i\in C_i} \ell(x_i)/g(x_i)$
+	\EndFor
+	\State $D = D \cup \{(\textbf{x}^*, f(\textbf{x}^*)\}$ \Comment{$\textbf{x}^*$ es el vector construido a partir de cada $x_i$.}
+\EndFor
+\Ensure $\textbf{x}$ con el mínimo valor $y$ en $D$.
+\vspace{3mm}
+
+\end{algorithmic}
+\end{algorithm}
  
 \section{Resultados}
 
