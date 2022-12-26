@@ -279,6 +279,13 @@ Por último en la figura \ref{fig:optuna_1d} se puede ver gráficamente el proce
 
 \subsection{Optimización Completa}
 
+\begin{figure}[p!]
+\centering
+\includegraphics[width=1\columnwidth, trim={6cm, 5cm, 12cm, 5cm}]{Optuna_2D.pdf}
+\caption{Optimización con 500 iteraciones para semilla de dos dimensiones utilizando el algoritmo TPE Multivariante.}
+\label{fig:optuna_2d}
+\end{figure}
+
 Utilizando un conjunto de entrenamiento con 70 valores discretos de $q$ equidistantes en el rango [1, 8] y 20 de $\chi_z$ ($\chi_{z_1} = \chi_{z_2}$) en el rango [-0.8, 0.8], dando lugar a un total de 1400 funciones de onda, se muestran los resultados de optimizar el máximo error de validación utilizando un conjunto de validación con 100 valores para $q$ y 30 vaores para $\chi_z$ con un total de 3000 funciones de onda.
 
 La optimización se realizó en los siguientes espacios de búsqueda:
@@ -292,13 +299,6 @@ X_0 &= \{\chi_{z_0} \ | \ \chi_{z_0} = -0.8 + j \Delta \chi_z, \ j\in \mathbb{N}
 \hat{\Lambda}_0 &\in \{ (q_0, \chi_{z_0}) \ | \ q_0 \in Q_0,\ \chi_{z_0} \in X_0 \}.
 \end{align*}
 
-
-\begin{figure}[p!]
-\centering
-\includegraphics[width=1\columnwidth, trim={6cm, 5cm, 12cm, 5cm}]{Optuna_2D.pdf}
-\caption{caption }
-\label{fig:optuna_2d}
-\end{figure}
 
 En total se realizaron 500 iteraciones, y el mejor máximo error de validación obtenido en la iteración número 269 fue de $1{.}45\times 10^{-6}$ con los hiperparámetros:
 
