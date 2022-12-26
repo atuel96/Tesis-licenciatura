@@ -5,7 +5,7 @@
 Sea $f: X \rightarrow \mathbb{R}$ una función que devuelve el máximo error de validación de un modelo entrenado a partir de una combinación de hiperparámetros $\textbf{x} \in X$, se desea encontrar $\hat{\textbf{x}}$:
 
 \[
-\hat{\textbf{x}} = arg \min_{\textbf{x} \in X} f(\textbf{x})
+\textbf{x}^* = arg \min_{\textbf{x} \in X} f(\textbf{x})
 \]
 
 Es decir, se busca encontrar la combinación óptima de hiperparámetros dentro de un dominio $X$ para obtener el mínimo error de representación en un dado conjunto de validación. En el caso de la construcción de una base \textit{hp-greedy} óptima: 
@@ -95,7 +95,7 @@ En la optimización bayesiana se construye un modelo estadístico, donde se repr
 \label{fig:gaussian}
 \end{figure}
 
-Una opción muy utilizada para la construcción del \textit{prior} y actualización del \textit{posterior} son los procesos gaussianos. Una forma sencilla de entender un proceso gaussiano es pensarlo como una función que para cada valor de $x$ devuelve la media $\mu(x)$ y la varianza $\sigma(x)$ de una distribución normal, en el caso particular de que $x$ sea unidimensional (ver figura \ref{fig:gaussian}). Con $\textbf{x}$ multidimensional, se obtiene una distribución normal multivariable, caracterizada por el vector $\bm{\mu}(\textbf{x})$ y la matriz de covarianza $\Sigma(\textbf{x}, \textbf{x}')$.
+Una opción muy utilizada para la construcción del \textit{prior} y actualización del \textit{posterior} son los procesos gaussianos. Una forma sencilla de entender un proceso gaussiano es pensarlo como una función que para cada valor de $x$ devuelve la media $\mu(x)$ y la varianza $\sigma(x)$ de una distribución normal, en el caso particular de que $x$ sea unidimensional (ver figura \ref{fig:gaussian}). Con $\textbf{x}$ multidimensional, se obtiene una distribución normal multivariante, caracterizada por el vector $\bm{\mu}(\textbf{x})$ y la matriz de covarianza $\Sigma(\textbf{x}, \textbf{x}')$.
 
 Sin embargo en este trabajo no se utilizan procesos gaussianos, principalmente porque parten del supuesto de que $f$ es continua. Para una introducción a la optimización bayesiana con procesos gaussianos ver \cite{https://doi.org/10.48550/arxiv.1012.2599}.
 
@@ -184,46 +184,19 @@ $\gamma \in (0,1) $ \Comment{cuantil para obtener $y^*$}
 \end{algorithmic}
 \end{algorithm}
  
+ 
+ 
+ 
+\subsubsection*{TPE Multivariante} 
+
+Una alternativa al algoritmo \ref{alg:TPE} es el algoritmo \textbf{TPE Multivariante}, implementado en Optuna \footnote{El algoritmo TPE Multivariante fue introducido en la siguiente actualización de Optuna: \url{https://github.com/optuna/optuna/pull/1767}}. La única diferencia es que en este caso las densidades no se construyen para cada hiperparámetro por separado, sino que se utilizan ventanas de Parzen multivariadas, dónde las funciones \textit{kernel} ahora son distribuciones gaussianas multivariadas. Es decir que en lugar de construir $\ell(x_i)$ y $g(x_i)$ para cada hiperparámetro, ahora se construye directamente $\ell(\textbf{x})$ y $g(\textbf{x})$.
+
+
 \section{Resultados}
 
 
 \subsection{Conjunto pequeño: Comparación de métodos}
 
- La búsqueda exhaustiva o \textit{grid search} consiste en probar todas las combinaciones posibles dentro de un espacio de hiperparámetros para seleccionar la solución óptima. Es decir que si se quiere buscar la combinación óptima de $(n_{max}, l_{max})$ para un rango de valores $n_{max} \in N,$ $l_{max} \in L$ se deberán probar todas las combinaciones posibles del producto cartesiano $N \times L = \{(n_{max}, l_{max}) | n_{max} \in N, l_{max} \in L\}$. 
- 
-La ventaja de este método está en que el resultado óptimo está garantizado, pues se pueden comparar todos los resultados entre sí y elegir el mejor. El problema es que, como se mencionó, la función $f$ es costosa de evaluar, y por otro lado el número de combinaciones posibles escala exponencialmente con cada hiperparámetro extra a optimizar (además se debe tener en cuenta que la semilla $\hat{\Lambda}_0$ tendrá generalmente más de una dimension).
-
-Por estas razones la búsqueda exhaustiva no será un método viable en la mayoría de los casos que son de interés para este trabajo. Sin embargo se puede poner a prueba con casos simplificados para luego comparar los resultados con otros métodos más eficaces.
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=.8\columnwidth, trim={1.1cm, 1cm, 1cm, 1.2cm}]{grid_seeds_0.pdf}
-\caption{Variación de la semilla $q_0$ para distintas combinaciones de $(n_{max}, l_{max})$}
-\label{fig:grid_seed_0}
-\end{figure}
-
-Por ejemplo, para un conjunto de entrenamiento con cincuenta ondas equidistantes en el espacio del parámetro unidimensional $q: 1 < q < 8$, se quiere optimizar el error de representación para un conjunto de validación con mil ondas. Los hiperparámetros a optimizar son $\textbf{x} = (n_{max}, l_{max}, \hat{\Lambda}_0)$, dejando $\varepsilon$ fijo en $1\times 10^{-12}$ para simplificar la búsqueda, que se realiza en los siguientes intervalos:
-
-\begin{align*}
-n_{max} &\in [5, 20],\\
-l_{max} &\in [1, 10],\\
-\hat{\Lambda}_0 &\in \{q_0 \ | \ q_0 = 1 + i \Delta q, \ i\in \mathbb{N} : 0 \le i \le 49, \ \Delta q = 7/49 \}.
-\end{align*}
-
-Son 16 valores de $n_{max}$, 10 valores de $l_{max}$ y 50 para $q_0$ ($\hat{\Lambda}_0 = q_0$). Lo que hace un total de 8000 combinaciones posibles.
-
-
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=1.05\columnwidth, trim={8cm, 1cm, 5cm, 1.1cm}]{grid_3_seeds.pdf}
-\caption{Máximo error de validación en función de $n_{max}$ y $l_{max}$ para tres diferentes semillas $q_0$. }
-\label{fig:grid_3_seeds}
-\end{figure}
-
-Si bien no se puede graficar el error en función de los tres hiperparámetros a la vez, se puede obtener bastante información al dejar fijo uno o dos hiperparámetros. Por ejemplo en la figura \ref{fig:grid_seed_0} se ven los resultados de variar únicamente la semilla para diferentes combinaciones de $n_{max}$ y $l_{max}$. Se observa que en este conjunto de datos la semilla suele ser óptima a valores cercanos a $q_0 = 8$, pero a la vez al aumentar el $n_{max}$ la influencia de la semilla es menor; con $(n_{max}, l_{max})=(20, 4)$ hay una diferencia de un orden de magnitud entre la mejor y la peor semilla, mientras que con $(n_{max}, l_{max})=(10, 9)$, por ejemplo, hay una diferencia de diez ordenes de magnitud.
-
-Luego, en la figura \ref{fig:grid_3_seeds} se observa el error de validación en función de las combinaciones posibles de  $n_{max}$ y $l_{max}$ para tres diferentes semillas. A la derecha, con $q_0=8$ se observa el mejor error de representación obtenido en la búsqueda exhaustiva, con un valor de $4\times10^{-30}$ (el cual se obtuvo para 16 combinaciones de hiperparámetros), casi 15 ordenes de magnitud menor que el siguiente mejor error.
 
 \begin{figure}[h!]
 \centering
@@ -232,36 +205,93 @@ Luego, en la figura \ref{fig:grid_3_seeds} se observa el error de validación en
 \label{fig:bench0}
 \end{figure}
 
+Utilizando un conjunto de entrenamiento con cien ondas equidistantes en el espacio del parámetro unidimensional $q: 1 < q < 8$, se quiere optimizar el error de representación para un conjunto de validación con quinientas ondas (cinco veces más denso). Los hiperparámetros a optimizar son $\textbf{x} = (n_{max}, l_{max}, \hat{\Lambda}_0)$, dejando $\varepsilon$ fijo en $1\times 10^{-12}$ para simplificar la búsqueda, que se realiza en los siguientes intervalos:
 
-\subsection{Semilla 2D: Optimización Completa}
+\begin{align*}
+n_{max} &\in \{5, 6, 7, ..., 20\},\\
+l_{max} &\in \{1, 2, 3, ..., 10 \},\\
+\hat{\Lambda}_0 &\in \{q_0 \ | \ q_0 = 1 + i \Delta q, \ i\in \mathbb{N} : 0 \le i \le 99, \ \Delta q = 7/99 \}.
+\end{align*}
+
+Son 16 valores de $n_{max}$, 10 valores de $l_{max}$ y 100 para $q_0$ ($\hat{\Lambda}_0 = q_0$). Lo que hace un total de 16000 combinaciones posibles.
+
+En la figura \ref{fig:bench0} se puede ver el resultado de realizar 20 optimizaciones de 100 iteraciones con tres diferentes métodos; búsqueda aleatoria (\textit{random}), TPE y TPE multivariante (los tres métodos están implementados en Optuna \cite{optuna_2019}). En linea oscura se representa la media del mejor error a cada iteración, y la zona sombreada representa los cuartiles. Aparte, en linea de trazo se marca el mejor error obtenido realizando una búsqueda exhaustiva (\textit{grid search}).
 
 
+En las primeras 10 repeticiones los tres métodos son equivalentes, pues para el algoritmo TPE (tanto el normal como el multivariable) se parte de un muestreo aleatorio de 10 observaciones. En la figura \ref{fig:bench0} se ve claramente que luego de las décima iteración se produce el cambio más notorio entre los tres métodos. Gráficamente se puede ver que ambas versiones del algoritmo TPE dan un mejor resultado que la búsqueda aleatoria, pero aparte de esto se pueden utilizar métricas como el \textbf{mejor valor encontrado} para la mediana de $y$ o el \textbf{área bajo la curva} o \textbf{AUC} (\textit{Area Under the Curve})\cite{Dewancker2016ASF}. En la tabla \ref{tab:comp1} están los resultados de estas métricas, considerando solo las últimas 90 iteraciones.
 
+
+\begin{table}
+\centering
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Algoritmo} & AUC (Mediana) & Mejor $Mediana(y)$ encontrada \\ 
+\midrule
+Búsqueda Aleatoria & $2.59\times 10^{-10}$ & $2.26\times 10^{-13}$ \\ 
+TPE & $1.20\times 10^{-11}$ & $1.04\times 10^{-13}$ \\ 
+TPE Multivariante & $5.20\times 10^{-12}$ & $5.48\times 10^{-14}$ \\ 
+\bottomrule
+\end{tabular} 
+\caption{Comparación entre algoritmos de optimización.}
+\label{tab:comp1}
+\end{table}
+
+\subsubsection*{Búsqueda Exhaustiva}
+La búsqueda exhaustiva o \textit{grid search} consiste en probar todas las combinaciones posibles dentro de un espacio de hiperparámetros para seleccionar la solución óptima. Es decir que si se quiere buscar la combinación óptima de $(n_{max}, l_{max})$ para un rango de valores $n_{max} \in N,$ $l_{max} \in L$ se deberán probar todas las combinaciones posibles del producto cartesiano $N \times L = \{(n_{max}, l_{max}) | n_{max} \in N, l_{max} \in L\}$. 
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=.9\columnwidth, trim={1cm, 1cm, 1cm, 1.1cm}]{opt_1d_value.pdf}
-\caption{caption }
-\label{fig:optuna_1_value}
+\includegraphics[width=1.05\columnwidth, trim={8cm, 1cm, 5cm, 1.1cm}]{grid_3_seeds.pdf}
+\caption{Máximo error de validación en función de $n_{max}$ y $l_{max}$ para tres diferentes semillas $q_0$. }
+\label{fig:grid_3_seeds}
 \end{figure}
-
-  
 
 \begin{figure}[h!]
 \centering
-\includegraphics[width=1.05\columnwidth, trim={10cm, 1cm, 10cm, 1.1cm}]{opt_1d_params.pdf}
-\caption{cption }
-\label{fig:optuna_1_params}
+\includegraphics[width=.8\columnwidth, trim={1.1cm, 1cm, 1cm, 1.2cm}]{grid_seeds_0.pdf}
+\caption{Máximo error de validación en función de la semilla $q_0$ para distintas combinaciones de $(n_{max}, l_{max})$}
+\label{fig:grid_seed_0}
 \end{figure}
 
 
+ 
+%La ventaja de este método está en que el resultado óptimo está garantizado, pues se pueden comparar todos los resultados entre sí y elegir el mejor. El problema es que, como se mencionó, la función $f$ es costosa de evaluar, y por otro lado el número de combinaciones posibles escala exponencialmente con cada hiperparámetro extra a optimizar (además se debe tener en cuenta que la semilla $\hat{\Lambda}_0$ tendrá generalmente más de una dimension).
 
-\begin{figure}[p!]
+%Por estas razones la búsqueda exhaustiva no será un método viable en la mayoría de los casos que son de interés para este trabajo. Sin embargo se puede poner a prueba con casos simplificados para luego comparar los resultados con otros métodos más eficaces.
+
+Si bien no se puede graficar el error en función de los tres hiperparámetros a la vez, se puede obtener bastante información al dejar fijo uno o dos hiperparámetros. Por ejemplo en la figura \ref{fig:grid_3_seeds} se observa el error de validación en función de las combinaciones posibles de  $n_{max}$ y $l_{max}$ para tres diferentes semillas. 
+
+Luego en la figura \ref{fig:grid_seed_0} se ven los resultados de variar únicamente la semilla para diferentes combinaciones de $n_{max}$ y $l_{max}$. 
+En este conjunto de datos se observa que para $(n_{max}, l_{max})=(20, 10)$ hay una diferencia de 9 ordenes de magnitud entre la peor y la mejor semilla (datos en color verde). Sin embargo para $(n_{max}, l_{max})=(15, 10)$ la diferencia es de 13 ordenes de magnitud (datos de color azul). Además el valor óptimo de la semilla no coincide exactamente en estos dos ejemplos, aunque tengan un comportamiento similar. Es decir que la influencia de la semilla depende del resto de hiperparámetros, sobre todo se tiene que tener en cuenta que en este caso la tolerancia \textit{greedy} tenía un valor $\varepsilon = 1\cdot 10^{-12}$, por lo que no se va a obtener un resultado mucho mejor que este.
+
+\begin{figure}[h!]
 \centering
-\includegraphics[width=1\columnwidth, trim={6cm, 5cm, 12cm, 5cm}]{Optuna_2D_noepsilon.pdf}
-\caption{caption }
-\label{fig:optuna_2d}
+\includegraphics[width=1\columnwidth, trim={5cm, 5cm, 11cm, 5cm}]{Optuna_1d_simple.pdf}
+\caption{Optimización con 100 iteraciones utilizando el algoritmo TPE multivariante para el conjunto de entrenamiento con semilla unidimensional.}
+\label{fig:optuna_1d}
 \end{figure}
+
+\subsubsection*{Tiempo de Optimización}
+
+Si bien la búsqueda exhaustiva garantiza encontrar el mejor resultado posible dentro del espacio de búsqueda, el tiempo necesario para realizar la búsqueda hace que el método no sea aplicable a casos relativamente complejos. En este caso sencillo, con 16000 combinaciones, la búsqueda requirió \textbf{25 horas} para completarse. En cambio las optimizaciones realizadas utilizando los algoritmos TPE tardaron una media de \textbf{8 minutos}.
+
+Por último en la figura \ref{fig:optuna_1d} se puede ver gráficamente el proceso de optimización utilizando el algoritmo TPE multivariable.
+
+\subsection{Optimización Completa}
+
+Utilizando un conjunto de entrenamiento con 70 valores discretos de $q$ equidistantes en el rango [1, 8] y 20 de $\chi_z$ ($\chi_{z_1} = \chi_{z_2}$) en el rango [-0.8, 0.8], dando lugar a un total de 1400 funciones de onda, se muestran los resultados de optimizar el máximo error de validación utilizando un conjunto de validación con 100 valores para $q$ y 30 vaores para $\chi_z$ con un total de 3000 funciones de onda.
+
+La optimización se realizó en los siguientes espacios de búsqueda:
+ 
+\begin{align*}
+n_{max} &\in \{10, 11, 12, ..., 60\},\\
+l_{max} &\in \{2, 3, 4, ..., 20 \},\\
+\varepsilon &\in \{ 10^{-20}, 10^{-19}, 10^{-18}, ..., 10^{-4}\},\\
+Q_0 &= \{ q_0 \ | \ q_0 = 1 + i \Delta q, \ i\in \mathbb{N} : 0 \le i \le 69, \ \Delta q = 7/69 \},\\
+X_0 &= \{\chi_{z_0} \ | \ \chi_{z_0} = -0.8 + j \Delta \chi_z, \ j\in \mathbb{N} : 0 \le j \le 19, \ \Delta \chi_z = 1.6/19 \}, \\
+\hat{\Lambda}_0 &\in \{ (q_0, \chi_{z_0}) \ | \ q_0 \in Q_0,\ \chi_{z_0} \in X_0 \}.
+\end{align*}
+
 
 \begin{figure}[p!]
 \centering
@@ -270,6 +300,28 @@ Luego, en la figura \ref{fig:grid_3_seeds} se observa el error de validación en
 \label{fig:optuna_2d}
 \end{figure}
 
+En total se realizaron 500 iteraciones, y el mejor máximo error de validación obtenido en la iteración número 269 fue de $1{.}45\times 10^{-6}$ con los hiperparámetros:
+
+\begin{align*}
+&n_{max}^* = 59, \\
+ &l_{max}^* = 4, \\
+&\varepsilon^* = 10^{-17},\\
+ &q_0^* = 7.899, \\
+ &\chi_{z_0}^* = 0.716.
+\end{align*}
+
+En la figura \ref{fig:optuna_2d} se observa la evolución de la optimización realizada, que requirió alrededor de 8 horas para completarse. Se puede ver que para cada hiperparámetro se observa una convergencia a cierto valor, pero sin dejar de lado la exploración, es decir, que se siguen evaluando hiperparámetros fuera del rango que parece óptimo, de forma que se evita caer mucho tiempo en mínimos locales.
 
 
-\subsection{Importancia de los Hiperparámetros}
+\subsubsection{Importancia de los Hiperparámetros}
+
+Una vez realizada una optimización se puede estimar la importancia relativa de cada hiperparámetro con el algoritmo fANOVA \cite{pmlr-v32-hutter14}. Básicamente la idea es dividir la varianza total en distintos componentes que representen la varianza producida por cada hiperparámetro. En la figura \ref{fig:param_import} se observa a la izquierda en naranja los resultados para la optimización realizada, y a la derecha en azul se ven los resultados para otro espacio de búsqueda, esta vez con $n_{max} \in \{20, ..., 30\}$  y $l_{max} = \{2, ..., 8\}$ (es decir que se redujo el espacio de búsqueda para $n_{max}$ y $l_{max}$). Se puede ver que la importancia que tienen los hiperparámetros depende claramente del espacio de búsqueda.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=1\columnwidth, trim={5cm, 2cm, 5cm, 2cm}]{params_importance_full.pdf}
+\caption{Importancia relativa de los hiperparámetros.}
+\label{fig:param_import}
+\end{figure}
+
+
