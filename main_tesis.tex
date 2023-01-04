@@ -17,7 +17,7 @@
 \usepackage{bm}
 \usepackage{booktabs}
 
-%\includeonly{datos_utilizados, hp_greedy}
+%\includeonly{marco teorico}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \renewcommand{\algorithmicrequire}{\textbf{Input:}}
@@ -82,12 +82,11 @@ A toda esa otra gente que no
 
 
 % Podemos usar cualquiera de los dos comandos: \input o \include para incluir el texto
-
 % capitulo 1
 \include{introduccion}
 % Capitulo 2
-\include{marco teorico}
-	\include{hp_greedy}
+%\include{marco teorico} % pasé esto a hp greedy por un fallo al cargar las citas. Muy raro todo pero funcionó
+\include{hp_greedy}
 % Capitulo 3
 \include{optimizacion}
 
