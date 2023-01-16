@@ -192,9 +192,87 @@ $\gamma \in (0,1) $ \Comment{cuantil para obtener $y^*$}
 Una alternativa al algoritmo \ref{alg:TPE} es el algoritmo \textbf{TPE Multivariante}, implementado en Optuna \footnote{El algoritmo TPE Multivariante fue introducido en la siguiente actualización de Optuna: \url{https://github.com/optuna/optuna/pull/1767}}. La única diferencia es que en este caso las densidades no se construyen para cada hiperparámetro por separado, sino que se utilizan ventanas de Parzen multivariadas, dónde las funciones \textit{kernel} ahora son distribuciones gaussianas multivariadas. Es decir que en lugar de construir $\ell(x_i)$ y $g(x_i)$ para cada hiperparámetro, ahora se construye directamente $\ell(\textbf{x})$ y $g(\textbf{x})$.
 
 
-\section{Resultados}
+\section{Optimización Multiobjetivo}
+
+En este sección se explicará de forma básica el funcionamiento del algoritmo MOTPE (\textit{Multiobjective Tree-Structured Parzen Estimator}) \cite{10.1613/jair.1.13188, 10.1145/3377930.3389817}, sin entrar en demasiados detalles, pues si bien es un método interesante, se puede conseguir un mejor resultado utilizando el TPE clásico, y limitando el máximo valor de $n_{max}$ permitido. 
+
+\subsection{Planteo del Problema}
+
+Minimizar el error de representación no es el único objetivo posible al momento de construir una base reducida \textit{hp greedy}. También es de mucho interés minimizar el tiempo necesario para proyectar un conjunto de validación más denso a la base ya creada.
+Esto se puede plantear como el problema de minimizar la función $\textbf{f}(\textbf{x})$:
+\[
+ \min_{\textbf{x} \in X} \textbf{f}(\textbf{x}) := (f_1(\textbf{x}), f_2(\textbf{x}))
+\]
+
+Cuando se quiere minimizar dos o más objetivos a la vez aparece el problema de que estos entran en conflicto entre sí, por lo que ya no se puede hablar de encontrar un valor mínimo en general, pero sí se puede encontrar un conjunto de elementos llamado \textbf{frente de Pareto} formado por los mejores valores encontrados. Con el conjunto de Pareto se decidirá que obetjivo es más importante relativo al resto, y se elegirá el valor deseado.
+
+Para entender mejor esto y el algoritmo MOTPE se empezará con algunas definiciones matemáticas que serán relevantes.
+
+\subsection{Preliminares Matemáticos}
+
+\noindent\textbf{Definición 1} Relación de Dominancia. Un vector $\textbf{y} \in \mathbb{R}^n$ domina al vector $\textbf{y'} \in \mathbb{R}^n$ si y solo si $\forall i: y_i \leq y_i'$ y $\exists i : y_i < y_i'$, y se denota con $\textbf{y} \prec \textbf{y'} $. Un vector $\textbf{y} \in \mathbb{R}^n$ domina débilmente al vector $\textbf{y'} \in \mathbb{R}^n$ si y solo si $\forall i: y_i \leq y_i'$, y se denota con $\textbf{y} \preceq \textbf{y'} $. \\
 
 
+\noindent\textbf{Definición 2} Relación incomparable. Dos vectores $\textbf{y},\textbf{y'} \in \mathbb{R}^n$ son incomparables si y solo si no se cumple que $\textbf{y} \preceq \textbf{y'} $ ni que $\textbf{y'} \preceq \textbf{y} $, y se denotan $\textbf{y}||\textbf{y'}$.\\
+
+
+%\noindent\textbf{Definición 3} Rango no dominante. Para un conjunto finito de vectores $Y \subset \mathbb{R}^n$, el rango no dominante de un vector $\textbf{y} \in Y$, denotado $rango(\textbf{y}) \in \mathbb{N}$ se define de la siguiente manera:
+
+%\begin{itemize}
+%\item rango$(\textbf{y}) = 1$, sii $\nexists \ \textbf{y'} \in Y : \textbf{y'} \prec \textbf{y}.$
+%\item rango$(\textbf{y}) = \max_{\textbf{y'} \in Y'}\text{rango}(\textbf{y'}) + 1, \text{ donde } Y' = \{ \textbf{y'} \in Y | \textbf{y'} \prec \textbf{y}\}.$
+%\end{itemize}
+%Un vector $\textbf{y} \in Y$ no está dominado sii rango$(\textbf{y})=1$. Se denota con $ Y_{rango(k)}$ al conjunto $\{ \textbf{y} \in Y | \text{rango}(\textbf{y}) = k \}$.\\
+
+
+\noindent\textbf{Definición 3} Relación de dominancia entre un vector y un conjunto. Para un conjunto finito de vectores $Y \subset \mathbb{R}^n$ y un vector $\textbf{y} \in \mathbb{R}^n$, se define $Y \prec \textbf{y}$ ($Y \preceq \textbf{y}$) si y solo si $\exists \ \textbf{y'} \in  Y_{rango(1)}:\textbf{y'} \prec \textbf{y}$ ($\textbf{y'} \preceq \textbf{y}$). También se define $\textbf{y} \prec Y$ ($\textbf{y} \preceq Y $) si y solo si $\exists \ \textbf{y'} \in  Y_{rango(1)}:\textbf{y} \prec \textbf{y'}$ ($\textbf{y} \preceq \textbf{y'}$).\\
+
+
+\noindent\textbf{Definición 4} Relación Incomparable entre un vector y un conjunto.  Para un conjunto finito de vectores $Y \subset \mathbb{R}^n$ y un vector $\textbf{y} \in \mathbb{R}^n$, se define que $Y || \textbf{y}$ (equivalente a $\textbf{y}||Y$) si y solo si $\forall \textbf{y'}\in Y_{rango(1)}:\textbf{y}||\textbf{y'}$.\\
+
+
+\noindent \textbf{Definición 5} Óptimo de Pareto. Dada una función $\textbf{f}: X \rightarrow \mathbb{R}^n$, un vector $\textbf{x}\in X$ es óptimo de Pareto si y solo si $\nexists \textbf{x'}\in X: \textbf{f(x')} \prec \textbf{f(x)} $. Un conjunto de vectores óptimos de Pareto $\{ \textbf{x} \in X | \nexists \textbf{x'}\in X: \textbf{f(x')} \prec \textbf{f(x)} \}$ se llama conjunto de Pareto. El conjunto de las imagenes del conjunto de Pareto $\{ \textbf{f(x)} \in \mathbb{R}^n | \textbf{x}\in X \text{es óptimo de Pareto} \}$ se llama frente de Pareto.
+
+
+%\noindent \textbf{Definición 7} Indicador de hipervolumen. Sea $\lambda(S)$ la medida de Lebesgue (que en $\mathbb{R}^2$ coincide con una medida de área) de un conjunto medible $S$, el indicador de hipervolumen $I_H$ de un conjunto finito de vectores $Y \subset \mathbb{R}^n$ con un punto de referencia $\textbf{r} \in \mathbb{R}^n$ se define como:
+
+%\begin{equation}
+%I_H(Y; r) := \lambda(\{ \textbf{y} \in \mathbb{R}^n| Y \preceq \textbf{y} \preceq \textbf{r} \})
+%\end{equation}
+
+%En adelante se expresará como $I_H(Y)$, omitiendo el $\textbf{r}$ cuando su elección no sea relevante.
+
+%\noindent \textbf{Definición 8} Contribución al hipervolumen. Para un conjunto finito de vectores $Y \subset \mathbb{R}^n$ y un vector $\textbf{y} \in Y$, la contribución de $\textbf{y}$ a $Y$ se define como $I_H(Y) - I_H(Y - \{ \textbf{y} \}).$
+
+Lo más importante de esta subsección es entender la relación de dominancia y el concepto del frente de Pareto.
+
+\subsection{Estimador de Parzen Multiobjetivo con Estructura Arbórea}
+
+El MOTPE es una extensión del TPE clásico, adaptado para optimizar una función multiobjetivo.
+
+Dado el conjunto de observaciones $D = \{(\textbf{x}^{(1)},\textbf{y}^{(1)}), \cdots, (\textbf{x}^{(k)},\textbf{y}^{(k)}) \}$, donde $\textbf{y}^{(j)} = \textbf{f}(\textbf{x}^{(j)})$, se modela $P(x_i|\textbf{y})$ para cada hiperparámetro $x_i$ usando las funciones de densidad de probabilidad $\ell(x_i)$ y $g(x_i)$:
+
+
+\begin{equation}
+\label{eq:motpe}
+P(x_i|\textbf{y}) =
+	\begin{cases}
+		\ell (x_i) & \text{si } (\textbf{y} \prec Y^*) \vee (\textbf{y} \| Y^*) \\
+		g(x_i) & \text{si } Y* \preceq \textbf{y},
+	\end{cases}
+\end{equation}
+
+con $Y^*$ un conjunto construido tal que $p((\textbf{y} \prec Y^*) \vee (\textbf{y} \| Y^*)) = \gamma$. Nuevamente, $\gamma \in (0,1)$ es un cuantil, y las funciones $\ell(x_i)$ y $g(x_i)$ se construyen utilizando ventanas de Parzen en base a las observaciones realizadas.
+
+En este caso la función de \textbf{mejora esperada} es un poco más complicada, pero se reduce al mismo resultado que con el TPE clásico; para maximizar la mejora esperada se debe maximizar la relación $\ell(x_i)/g(x_i)$ para cada $x_i$. Para ver en mayor detalle este resultado y el algoritmo completo del método, se recomienda ver \cite{10.1613/jair.1.13188}.
+
+
+
+\chapter{Resultados}
+
+En este capítulo se recogen los resultados más relevantes de la optimización de Hiperparámetros
+\section{Optimización del Máximo Error de Validación}
+En esta sección se encuentran los resultados de las optimizaciones realizadas teniendo en cuenta únicamente el máximo error de validación
 \subsection{Conjunto pequeño: Comparación de métodos}
 
 
@@ -320,8 +398,29 @@ Una vez realizada una optimización se puede estimar la importancia relativa de 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=1\columnwidth, trim={5cm, 2cm, 5cm, 2cm}]{params_importance_full.pdf}
-\caption{Importancia relativa de los hiperparámetros.}
+\caption{Importancia relativa de los hiperparámetros para dos espacios de búsqueda diferentes.}
 \label{fig:param_import}
 \end{figure}
 
+
+
+
+\section{Optimización Multiobjetivo}
+
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=.8\columnwidth, trim={1cm, 1cm, 1cm, 1cm}]{motpe_pareto.pdf}
+\caption{Máximo error de validación versus el tiempo de proytección. Cada punto representa una observación. En color naranja se marca el frente de Pareto.}
+\label{fig:pareto}
+\end{figure}
+
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=1\columnwidth, trim={5cm, 2cm, 5cm, 2cm}]{motpe_correlation.pdf}
+\caption{Relación entre el tiempo de ejecución y los diferentes hiperparámetros.}
+\label{fig:motpe_param_rel}
+\end{figure}
 
