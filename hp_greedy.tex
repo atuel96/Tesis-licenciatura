@@ -232,7 +232,7 @@ Los nodos que no tengan hijos se llamarán nodos \textit{hojas}.
 \begin{figure}[h!]
 \centering
 \includegraphics[width=.5\columnwidth]{Bl_lmax2.png}
-\caption{Representación de los nodos de un árbol con $l_{max}=2$.}
+\caption{Representación de los nodos de un árbol con $l_{max}=2$ \cite{Cerino:2022dhr}.}
 \end{figure}
 
 El método está explicado en el algoritmo \ref{alg:hp}; partiendo de un dado dominio de parámetros $V$ se construye una base reducida a partir de un conjunto de entrenamiento $\mathcal{T}_V = \{\lambda_{V_i}, h_{\lambda_{V_i}}\}_{i=1}^{N}$, una \textit{tolerancia greedy} $\varepsilon$ y un $n_{max}$ (para esto se utiliza el algoritmo \ref{alg:rb}). Si el error de representación $\sigma$ es mayor que la tolerancia $\varepsilon$, y si la profundidad del nivel $l$ es menor a $l_{max}$, entonces se realizará una partición del dominio $V$ utilizando como puntos de anclaje a los dos primeros parámetros \textit{greedy}. En cada dominio se realizará el mismo procedimiento hasta que se cumpla que $l = l_{max}$ o hasta que $\sigma \le \varepsilon$.
@@ -242,7 +242,7 @@ El método está explicado en el algoritmo \ref{alg:hp}; partiendo de un dado do
 \begin{algorithm}
 \caption{\texttt{hpGreedy}\((\mathcal{T}, \varepsilon, n_{max}, l, l_{max}, B_{l})\)}\label{alg:hp}
 \begin{algorithmic}[1]
-\Require $\mathcal{T} = \{ \lambda_{i}, h_{i} \}_{i=0}^N, \varepsilon, n_{max},l, l_{max}, B_{l})$ 
+\Require $\mathcal{T} = \{ \lambda_{i}, h_{i} \}_{i=0}^N, \varepsilon, n_{max},l, l_{max}, B_{l}$ 
 \vspace{3mm}
 \State rb, $\Lambda_V$, $\sigma$ = \texttt{GreedyRB}($\mathcal{T}_V,\lambda_V, \varepsilon, n_{max}$) 
 \vspace{3mm}
@@ -337,7 +337,7 @@ Al momento de construir una base \textit{hp-greedy} entran en juego cuatro hiper
 \item $\bm{\varepsilon}$: la tolerancia \textit{greedy} interviene tanto en el tamaño de las bases locales como en la profundidad de las hojas del árbol. Un valor de $\varepsilon$ demasiado bajo también puede dar lugar a sobreajuste, sobre todo con valores muy altos de $l_{max}$. Un valor de $\varepsilon = 0$ implica que se obtiene un árbol totalmente denso, determinado únicamente por $n_{max}$ y $l_{max}$, y al aumentar el valor de $\varepsilon$ se puede pensar en la analogía de podar un árbol, de forma que se previene el sobreajuste.
 \end{itemize}
 
-Al cuarto hiperparámetro se le da el nombre de \textit{\textbf{semilla}} y se la denota con $\bm{\hat{\Lambda}_0}$;
+Al cuarto hiperparámetro se le da el nombre de \textit{\textbf{semilla}} y en este trabajo se la denota con $\bm{\hat{\Lambda}_0}$ para diferenciarla de la semilla de una base local, denotada por $\Lambda_1$;
 
 \begin{figure}[h!]
 \centering
@@ -349,8 +349,6 @@ Al cuarto hiperparámetro se le da el nombre de \textit{\textbf{semilla}} y se l
 \begin{itemize}
 \item $\bm{\hat{\Lambda}_0}$: la semnilla no es más que el primer parámetro \textit{greedy} de la base global. En cada base local, el primer parámetro \textit{greedy} no es relevante, pero en el caso de las bases \textit{hp-greedy} cada semilla dará lugar a una división diferente del dominio de parámetros. En la figura \ref{fig:seeds0} se puede ver como cuatro semillas diferentes dan lugar a cuatro curvas de error con distinta convergencia. En la figura \ref{fig:seeds_part}, por otro lado, se observa el resultado de la partición del dominio para tres semillas diferentes. En general las semillas que mejor funcionan (con el conjunto de datos utilizado) son las que logran una partición regular del dominio de parámetros.
 \end{itemize}
-
-
 
 \begin{figure}[h!]
 \centering
