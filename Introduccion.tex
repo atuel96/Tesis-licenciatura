@@ -1,6 +1,6 @@
 \chapter{Introducción}
 
-La ciencia de ondas gravitacionales es un área que vivió un rápido crecimiento en las últimas décadas. Este crecimiento llevó en septiembre del 2015 a la increíble primera detección obtenida de ondas gravitacionales producto de una colisión binaria de agujeros negros \cite{https://doi.org/10.48550/arxiv.1607.05251, LIGOScientific:2016aoc}. Actualmente los interferometros LIGO, VIRGO y KAGRA van detectando cerca de 50 eventos, y planean empezar la cuarta serie de observaciones O4 a mediados de mayo de 2023 \footnote{https://observing.docs.ligo.org/plan/}. 
+La ciencia de ondas gravitacionales es un área que vivió un rápido crecimiento en las últimas décadas. Este crecimiento llevó en septiembre del 2015 a la increíble primera detección obtenida de ondas gravitacionales producto de una colisión binaria de agujeros negros \cite{https://doi.org/10.48550/arxiv.1607.05251, LIGOScientific:2016aoc}. Actualmente los interferometros LIGO, VIRGO y KAGRA van detectando cerca de 50 eventos, y planean empezar la cuarta serie de observaciones O4 a mediados de mayo de 2023 \footnote{\url{https://observing.docs.ligo.org/plan/}}. 
 
 Cada observación no es solo una confirmación de una de las predicciones más relevantes de las ecuaciones de Einstein, sino que pueden aportan una gran cantidad de información de los fenómenos que las producen. De una onda producida por la colisión de dos agujeros negros se pueden inferir un total de 15 parámetros, de los cuales algunos son \textit{intrínsecos} (como la relación entre las masas, o los espínes) y otros \textit{extrínsecos} (la distancia del evento, la posición en el cielo, etc) \cite{Veitch_2015}. 
 
@@ -38,33 +38,58 @@ Realizar una elección manual de los hiperparámetros de una base reducida \text
 
 %est. param \cite{Veitch_2015}
 
-\newpage
 
 
-\section{Representación Ondas Gravitacionales}
 
-ondas grav. rel num \cite{Centrella_2010}
-\section{Datos utilizados}
+\section{Representación de Ondas Gravitacionales}
 
-Se utilizaron ondas gravitacionales generadas a partir del modelo híbrido \textit{NRHybSur3dq8}\cite{Varma_2019} de relativdad numérica y aproximaciones post Newtonianas para colisiones de agujeros negros binarios.
+La colisión de dos agujeros negros es uno de los eventos que más energía libera en el universo. Una gran parte de esta energía se libera en forma de ondas gravitacionales \cite{Centrella_2010}. Estas ondas, al igual que las ondas electromagnéticas, son transversales.
+
+Para la representación de una onda gravitacional se utiliza la magnitud $h$ denominada \textit{strain} que es proporcional a la deformación relativa del espacio. Existen tres partes que pueden ser identificadas en la función de onda; \textit{inspiral}, \textit{merger} y \textit{ringdown}. 
+
+En la primera etapa (\textit{inspiral}) los dos agujeros negros se orbitan mutuamente durante mucho tiempo, acercandose poco a poco a la vez que sus velocidades aumentan. Eventualmente los agujeros negros se acercan demasiado y se produce la colisión (\textit{merger}), caracterizada por un solo horizonte de eventos. Es aquí dónde se produce el pico de intensidad de la función de onda. Por último, la amplitud disminuye rápidamente con forma similar a una oscilación amortiguada, denotando el final de la colisión (\textit{ringdown}).
+
+Una forma conveniente de expresar una onda gravitacional es a partir de una expansión en los armónicos esféricos con peso en espín $s=-2$, denotados por $\text{ }_{-2} Y^{lm} (\theta, \phi)$:
+\begin{equation}
+h( \lambda; t, r, \theta , \phi) =  \sum_{l=2}^{\infty}  \sum_{m=-l}^{l} \text{ }_{-2} Y^{lm} (\theta, \phi) h^{lm}(\lambda; t, r).
+\end{equation}
+
+
+Para grandes distancias se puede expresar:
+\begin{equation}
+h( \lambda; t, r, \theta , \phi) \approx \frac{1}{r}  \sum_{l=2}^{\infty}  \sum_{m=-l}^{l} \text{ }_{-2} Y^{lm} (\theta, \phi) h^{lm}(\lambda; t)
+\end{equation}
+
+donde para cada par $(l, m)$, $h(\lambda; t)$ es un valor complejo que denota dos tipos de polarizaciones; $+$ y $\times$:
+
+\begin{equation}
+h(\lambda; t) = h_{+}(\lambda; t) + i h_{\times}(\lambda; t)
+\end{equation}
+
+La polarización $+$ representa una onda que estira a lo largo de un eje y comprime a lo largo del otro, mientras que la polarización $\times$ hace lo mismo pero en ejes rotados $45^{\circ}$.
+
+El término $\lambda$ se refiere al conjunto de parámetros que define a la onda producida por la colisión binaria.
+
+
+\subsection*{Datos Utilizados}
+
+Para esta tésis se utilizaron ondas gravitacionales generadas a partir del modelo híbrido \textit{NRHybSur3dq8}\cite{Varma_2019} que utiliza relativdad numérica y aproximaciones post Newtonianas para colisiones de agujeros negros binarios.
 \\
 
-Cada onda \(h\) generada se representa por una serie temporal compleja de la forma:
+Cada onda generada \( h := h(t; \lambda) := h_{\lambda}(t) := h_{\lambda} \), parametrizada por $\lambda$, se representa con una serie temporal compleja de la forma (ver figura \ref{fig:h_q3})
 \[
 h = h_+ + ih_{\times}
 \]
 
-
-Recordando que $h$ está parametrizada por \(\lambda\)
-
- \[h = h(t; \lambda) = h_{\lambda}(t) = h_{\lambda} \]
- 
-En este caso \(\lambda\) tendrá 3 dimensiones, $(q, \chi_{1_Z},\chi_{2_Z}) $, y estará acotado de la siguiente manera:
+En el desarrollo de este trabajo \(\lambda\) tendrá 3 dimensiones relevantes, acotadas de la siguiente manera:
 
 \begin{itemize}
 \item Relación entre masas $q$: $1 \le q \le 8$
-\item Espín del agujero negro más pesado (liviano) $\chi_{1_Z} (\chi_{1_Z})$: $|\chi_{1_Z}|, |\chi_{2_Z}| < 0.8$
+\item Espín del agujero negro más pesado $\chi_{1_Z}$: $|\chi_{1_Z}| < 0.8$
+\item Espín del agujero negro más liviano $\chi_{2_Z}$: $|\chi_{2_Z}| < 0.8$
 \end{itemize}
+
+Y para tener un espacio de parámetros más simple, en todos los casos se trabajó con $\chi_{1_Z} = \chi_{1_Z}$, por lo que se puede hablar directamente del espín $\chi_{Z}=\chi_{1_Z} = \chi_{1_Z}$.
 
 \begin{figure}[h]
 \centering
@@ -100,11 +125,15 @@ h_{\lambda_N}(t_1) & h_{\lambda_N}(t_2)  & \cdots & h_{\lambda_N}(t_L)
 
 Siendo $L$ la longitud de la serie temporal. De forma que cada fila de $H$ es una onda gravitacional.
 
+También es útil el conjunto de las muestras en el espacio de los parámetros
+$\{ \lambda_i \}_{i=1}^N$. 
+Un conjunto de entrenamiento (o validación) consistirá en el conjunto que contenga cada parámetro $\lambda_i$ junto con su onda parametrizada $h_{\lambda_i}$:
 
-% Por las citas nomas:
+\[
+\mathcal{T} := \{ \lambda_i, h_{\lambda_i} \}_{i=1}^N
+\]
 
-%\cite{Pinkus1985nWidthsIA}:
-%Por lo tanto $d_n$ sirve como un límite superior; es lo mejor que se puede lograr si la base fue escogida de forma óptima.
-%En algunos casos $d_n$ se puede calcular teóricamente \cite{MAGARILILYAEV200197}. Más específicamente se puede probar que $d_n \sim n^{-r}$ para funciones con sus primeras $(r-1)$ derivadas continuas y que $d_n \sim e^{-an^b}$ para funciones con una dependencia $C^{\infty}$  \cite{articleg}. En el contexto de ondas gravitacionales se espera un comportamiento asíntotico de convergencia exponencial con $n$ %\citep{PhysRevX.4.031006, Herrmann:2012xpx}.
-%\cite{https://doi.org/10.48550/arxiv.1204.2290}
-%\cite{Caudill_2012}
+\section{Esquema de Este Trabajo}
+
+
+
