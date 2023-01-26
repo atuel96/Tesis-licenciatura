@@ -171,9 +171,8 @@
 {      \vskip 4ex \vfill%
       \@laboratorio
       \vskip 3em%
-        Instituto Balseiro\\
-        Universidad Nacional de Cuyo\\
-        Comisi\'{o}n Nacional de Energ\'{\i}a At\'{o}mica\\
+        Facutlad de Ciencias Exactas y Tecnología\\
+        Universidad Nacional de Tucumán\\
         Argentina
 }    \end{center}\par
      \@thanks%

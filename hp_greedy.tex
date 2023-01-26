@@ -1,8 +1,8 @@
 \chapter{Teoría de Aproximaciones: Bases Reducidas y Aprendizaje}
 
 
-En la primera sección de este capítulo se dará una introducción a las bases reducidas, un método de aproximación fundamental en el modelado de orden reducido \cite{Tiglio:2021ysj}. Este marco posee dos etapas bien diferenciadas; por un lado la parte de entrenamiento que puede ser bastante costosa (\textit{offline}) pero que solo debe realizarse una vez, y después la parte de evaluación, que es mucho más rápida (\textit{online}).
-Luego, en la segunda sección se ampliará con el refinamiento hp \textit{greedy} \cite{Cerino:2022dhr}; una metodología que descompone de forma iterativa el dominio de parámetros para crear bases reducidas locales.
+En la primera sección de este capítulo se dará una introducción a las bases reducidas, un método de aproximación fundamental en el modelado de orden reducido \cite{Tiglio:2021ysj}. Este marco posee dos etapas bien diferenciadas; por un lado la parte de entrenamiento que puede ser bastante costosa pero que solo debe realizarse una vez, y después la parte de evaluación, que es mucho más rápida y puede utilizarse multiples veces.
+Luego, en la segunda sección se ampliará con el refinamiento hp \textit{greedy} \cite{Cerino:2022dhr}; una metodología que descompone de forma iterativa el dominio de parámetros para crear bases reducidas locales de forma adaptativa.
 
 %\section{Aproximación por Proyección}
 %Antes de entender las bases reducidas es necesario tener claro como se aproxima un vector o función a un dado espacio.
@@ -27,26 +27,27 @@ h_{\lambda} (t) \approx \sum_{i=1}^{n} c_{i,\lambda} e_i(t).
 \subsection{Elección de una base óptima}
 
 %Antes de poder representar $\mathcal{F}$ se necesita encontrar una base óptima dado un error de tolerancia $\varepsilon$ y/o un máximo número de elementos en la base $n_{max}$.
-La pregunta de que tan bien se puede aproximar el espacio $\mathcal{F}$ lleva a la distancia de Kolmogorov \cite{Pinkus1985nWidthsIA}:
+La pregunta de que tan bien se puede aproximar el espacio $\mathcal{F}$ a partir de una base $\{e_i\}_{i=1}^n$ lleva a la definición de la distancia de Kolmogorov \cite{Pinkus1985nWidthsIA}:
 
 \begin{equation} \label{eq:kolmogorov}
-d_n := \min_{\{e_i\}_{i=1}^n} \max_{\lambda \in \Omega} \min_{ c_{i,\lambda} \in \mathbb{C}} || h_{\lambda} - \sum_{i=1}^{n} c_{i,\lambda} e_i(t)||^2.
+d_n := \min_{\{e_i\}_{i=1}^n} \max_{\lambda \in \Omega} \min_{ c_{i,\lambda} \in \mathbb{C}} \| h_{\lambda} - \sum_{i=1}^{n} c_{i,\lambda} e_i(t)\|^2.
 \end{equation}
 
 
 
-Básicamente es una medida del máximo error de representación en un espacio compacto de parámetros $\Omega$, con una base y coeficientes óptimos.
-El producto interno $||\cdot||$ está dado por
+Esta distancia es básicamente es una medida del máximo error de representación en un espacio compacto de parámetros $\Omega$, con una base y coeficientes óptimos.
+
+El producto interno $\|\cdot\|$ en \eqref{eq:kolmogorov} está dado por
 
 \[
-||h_{\lambda}||^2 :=\int_{t_i}^{t_f}|h_{\lambda}(t)|^2dt
+\|h_{\lambda}\|^2 :=\int_{t_i}^{t_f}|h_{\lambda}(t)|^2dt
 \]
 definido a partir del producto interno
 \[
 \langle h_1, h_2 \rangle  :=\int_{t_i}^{t_f} \overline{h_{1}}(t) h_2 (t)dt
 \]
 
-Para entender la notación en $d_n$, analizando los $\min$, $\max$ y $\min$ de derecha a izquierda:
+Para entender la notación en $d_n$, se explica el signifcado de los $\min$, $\max$, $\min$ de derecha a izquierda:
 
 \begin{itemize}
 \item $\min_{ c_{i,\lambda} \in \mathbb{C}}$ se refiere a la representación óptima con respecto a la base utilizada. Esto implica realizar una proyección ortogonal a la base. Suponiendo una base ortonormal los coeficientes óptimos serán:

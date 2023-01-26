@@ -146,7 +146,7 @@ P(x_i) = \frac{\sum_{x_i'\in D_x}w_{x_i'}k(x_i, x_i') + w_p k(x_i, x_p) }{\sum_{
 \end{equation}
  
 
-donde $w_{x_i'}$ es el peso de la observación $x_i'$(ver \cite{https://doi.org/10.48550/arxiv.1209.5111}), $x_p$ es un valor fijo \textit{prior}, $w_p$ es un peso \textit{prior} (por defecto igual a $1$) y $k$ es la función \textit{kernel}, que en este caso son distribuciones gaussianas truncadas centradas en los puntos $x_i'$ (ver \cite{10.1145/3377930.3389817} para más detalle).
+donde $w_{x_i'}$ es el peso de la observación $x_i'$, $x_p$ es un valor fijo \textit{prior}, $w_p$ es un peso \textit{prior} y $k$ es la función \textit{kernel}, que en este caso son distribuciones gaussianas truncadas $\mathcal{N}_{trunc}(\mu, \sigma, a, b)$ centradas en los puntos $x_i'$ (es decir, $\mu = x_i´$) con $a$ y $b$ límites inferior y superior del dominio. Por defecto los pesos $w_{x_i'}$ y $w_p$ son iguales a $1$. Para ver más detalles ver \cite{10.1613/jair.1.13188} y \cite{NIPS2011_86e8f7ab}.
 
 %LEER https://tech.preferred.jp/en/blog/multivariate-tpe-makes-optuna-even-more-powerful/ !!!
 
@@ -184,8 +184,9 @@ $\gamma \in (0,1) $ \Comment{cuantil para obtener $y^*$}
 \end{algorithmic}
 \end{algorithm}
  
+\subsection*{Paralelización}
  
- 
+El algoritmo escrito en Optuina permite paralelizar el proceso de optimización de forma asincrónica; esto se lograba utilizando un método llamado \textit{mentiroso constante} (\textit{constant liar}) \cite{NIPS2011_86e8f7ab}. Consiste en que al proponer un valor $\textbf{x}^*$, se asigne temporalmente una evaluación falsa igual al promedio de los valores de $y$ medidos, que luego se actualizará al valor real al momento de finalizar la evaluación. Este proceso puede hacer la optimización menos eficiente con respecto al número de iteracionies, pero más rapida a fin de cuentas ya que se pueden realizar varias iteraciones a la vez.
  
 \subsubsection*{TPE Multivariante} 
 
