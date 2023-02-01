@@ -19,7 +19,6 @@ Es decir, se busca encontrar la combinación óptima de hiperparámetros dentro 
 
 %También se observó que en ciertas situaciones un valor muy elevado de $l_{max}$ o muy pequeño de la $tolerancia$ $greedy$ pueden conducir a un modelo \textit{sobreajustado}. Por esto es de interés realizar una optimización que involucre a la totalidad de los hiperparámetros dentro del dominio $X$. 
 
-
 El problema al momento de realizar esta optimización es que la función $f$ no tiene una expresión analítica, sino es que es el resultado de entrenar el modelo y evaluar el error de representación con un conjunto de validación, lo que la hace costosa de evaluar (computacionalmente hablando). Este capítulo se centrará principalmente en la \textbf{optimización Bayesiana} \cite{7352306, https://doi.org/10.48550/arxiv.1012.2599}, un método que intenta reducir al mínimo el número de evaluaciones de $f$ para encontrar $\hat{\textbf{x}}$ y se puede colocar dentro de una categoría llamada optimización secuencial basada en modelos, o \textbf{SMBO}\cite{dewancker2015bayesian,NIPS2011_86e8f7ab} (\textit{Secuential Model-Based Optimization}).
 
 
@@ -186,7 +185,7 @@ $\gamma \in (0,1) $ \Comment{cuantil para obtener $y^*$}
  
 \subsection*{Paralelización}
  
-El algoritmo escrito en Optuina permite paralelizar el proceso de optimización de forma asincrónica; esto se lograba utilizando un método llamado \textit{mentiroso constante} (\textit{constant liar}) \cite{NIPS2011_86e8f7ab}. Consiste en que al proponer un valor $\textbf{x}^*$, se asigne temporalmente una evaluación falsa igual al promedio de los valores de $y$ medidos, que luego se actualizará al valor real al momento de finalizar la evaluación. Este proceso puede hacer la optimización menos eficiente con respecto al número de iteracionies, pero más rapida a fin de cuentas ya que se pueden realizar varias iteraciones a la vez.
+El algoritmo escrito en Optuina permite paralelizar el proceso de optimización de forma asincrónica; esto se logra utilizando un método llamado \textit{mentiroso constante} (\textit{constant liar}) \cite{NIPS2011_86e8f7ab}. Consiste en que al proponer un valor $\textbf{x}^*$ se asigne temporalmente una evaluación falsa igual al promedio de los valores de $y$ medidos, que luego se actualizará al valor obtenido al momento de finalizar la evaluación real. Este proceso puede hacer la optimización menos eficiente con respecto al número de iteraciones, pero más rápida a fin de cuentas ya que se pueden realizar varias iteraciones a la vez.
  
 \subsubsection*{TPE Multivariante} 
 
