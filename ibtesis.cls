@@ -134,11 +134,22 @@
     \let\footnotesize\small
     \let\footnoterule\relax
     \let \footnote \thanks
+    
+    \begin{figure}[ht]
+	   \minipage{0.76\textwidth}
+			\includegraphics[height=2cm]{figs//logos//facet}
+			\label{EscudoUABC}
+	   \endminipage
+	   \minipage{0.32\textwidth}
+			\includegraphics[height = 2 cm]{figs//logos//unt}
+			\label{EscudoFC}
+		\endminipage
+	\end{figure}
     \begin{center}%   Carrera
       {\Large  \MakeUppercase \@carrera\\}
-      \vskip 10ex%     Titulo
+      \vskip 9ex%     Titulo
       {\bfseries \MakeUppercase \@title \par}%
-      \vskip 10ex%     Autor
+      \vskip 9ex%     Autor
       % \vfill
       {%
         \begin{tabular}[t]{c}%
