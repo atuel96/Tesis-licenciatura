@@ -22,7 +22,7 @@ Es decir, se busca encontrar la combinación óptima de hiperparámetros dentro 
 El problema al momento de realizar esta optimización es que la función $f$ no tiene una expresión analítica, sino es que es el resultado de entrenar el modelo y evaluar el error de representación con un conjunto de validación, lo que la hace costosa de evaluar (computacionalmente hablando). Este capítulo se centrará principalmente en la \textbf{optimización Bayesiana} \cite{7352306, https://doi.org/10.48550/arxiv.1012.2599}, un método que intenta reducir al mínimo el número de evaluaciones de $f$ para encontrar $\hat{\textbf{x}}$ y se puede colocar dentro de una categoría llamada optimización secuencial basada en modelos, o \textbf{SMBO}\cite{dewancker2015bayesian,NIPS2011_86e8f7ab} (\textit{Secuential Model-Based Optimization}).
 
 
-Además existen dos métodos muy utilizados que no utilizan modelos, los cuales son la \textbf{busqueda exaustiva} (o \textit{grid search}) y la \textbf{búsqueda aleatoria}. Estos métodos se utilizaron en casos sencillos de optimización para realizar una comparación con la optimización bayesiana.
+Además existen dos métodos muy utilizados que no utilizan modelos, los cuales son la \textbf{búsqueda exhaustiva} (o \textit{grid search}) y la \textbf{búsqueda aleatoria}. Estos métodos se utilizaron en casos sencillos de optimización para realizar una comparación con la optimización bayesiana.
 
 
 \subsubsection*{Comentario sobre el dominio $X$}
@@ -82,7 +82,7 @@ En la optimización bayesiana se construye un modelo estadístico, donde se repr
  P(y|\textbf{x}) = \frac{P(\textbf{x}|y) \ P(y)}{P(\textbf{x})}
  \]
  
- En la terminología bayesiana, se conoce a $P(y|\textbf{x})$ como probabilidad a posteriorí o \textit{posterior}, que es proporcional a la probabilidad a priori o \textit{prior} $P(y)$ por la función de verosimilitud o \textit{likelihood} $P(\textbf{x}|y)$. La probabilidad $P(\textbf{x})$ es una probabilidad marginal que sirve como factor de normalización, por lo que no es de tanto interés.
+En la terminología bayesiana, se conoce a $P(y|\textbf{x})$ como probabilidad a posteriorí o \textit{posterior}, que es proporcional a la probabilidad a priori o \textit{prior} $P(y)$ por la función de verosimilitud o \textit{likelihood} $P(\textbf{x}|y)$. La probabilidad $P(\textbf{x})$ es una probabilidad marginal que sirve como factor de normalización, por lo que no es de tanto interés.
 
 
 \subsubsection*{Procesos Gaussianos}
@@ -101,7 +101,7 @@ Sin embargo en este trabajo no se utilizan procesos gaussianos, principalmente p
 \subsection{Mejora Esperada: Función De Adquisición} 
  
 %Debido a que la función $f$ no será necesariamente convexa, y seguramente tendrá varios mínimos locales, es necesario mantener un equilibrio entre la explotación y la exploración, es decir, explorar los mínimos tentativos sin dejar de lado las zonas inexploradas, en donde podría haber algún mínimo por descubrir. De esto se encarga la función de adquisición.
-Para la elección de los puntos a evaluar en la función real se maximiza la función de adquisición $S$. Existen varias propuestas de funciones de adquisición, pero en este caso se utiliza la \textbf{mejora esperada} o EI(\textit{Expected Improvement}) \cite{EI1}. Sea $y^*$ un valor de referencia, se define a la mejora esperada  con respecto a $y^*$ como:
+Para la elección de los puntos a evaluar en la función real se maximiza la función de adquisición $S$. Existen varias propuestas de funciones de adquisición, pero en este caso se utiliza la \textbf{mejora esperada} o \textit{Expected Improvement} (EI) \cite{EI1}. Sea $y^*$ un valor de referencia, se define a la mejora esperada  con respecto a $y^*$ como:
 
 
 \begin{equation}
@@ -185,7 +185,7 @@ $\gamma \in (0,1) $ \Comment{cuantil para obtener $y^*$}
  
 \subsection*{Paralelización}
  
-El algoritmo escrito en Optuina permite paralelizar el proceso de optimización de forma asincrónica; esto se logra utilizando un método llamado \textit{mentiroso constante} (\textit{constant liar}) \cite{NIPS2011_86e8f7ab}. Consiste en que al proponer un valor $\textbf{x}^*$ se asigne temporalmente una evaluación falsa igual al promedio de los valores de $y$ medidos, que luego se actualizará al valor obtenido al momento de finalizar la evaluación real. Este proceso puede hacer la optimización menos eficiente con respecto al número de iteraciones, pero más rápida a fin de cuentas ya que se pueden realizar varias iteraciones a la vez.
+El algoritmo escrito en Optuna permite paralelizar el proceso de optimización de forma asincrónica; esto se logra utilizando un método llamado \textit{mentiroso constante} (\textit{constant liar}) \cite{NIPS2011_86e8f7ab}. Consiste en que al proponer un valor $\textbf{x}^*$ se asigne temporalmente una evaluación falsa igual al promedio de los valores de $y$ medidos, que luego se actualizará al valor obtenido al momento de finalizar la evaluación real. Este proceso puede hacer la optimización menos eficiente con respecto al número de iteraciones, pero más rápida a fin de cuentas ya que se pueden realizar varias iteraciones a la vez.
  
 \subsubsection*{TPE Multivariante} 
 
@@ -204,7 +204,7 @@ Esto se puede plantear como el problema de minimizar la función $\textbf{f}(\te
  \min_{\textbf{x} \in X} \textbf{f}(\textbf{x}) := (f_1(\textbf{x}), f_2(\textbf{x}))
 \]
 
-Cuando se quiere minimizar dos o más objetivos a la vez aparece el problema de que estos entran en conflicto entre sí, por lo que ya no se puede hablar de encontrar un valor mínimo en general, pero sí se puede encontrar un conjunto de elementos llamado \textbf{frente de Pareto} formado por los mejores valores encontrados. Con el conjunto de Pareto se decidirá que obetjivo es más importante relativo al resto, y se elegirá el valor deseado.
+Cuando se quiere minimizar dos o más objetivos a la vez aparece el problema de que estos entran en conflicto entre sí, por lo que ya no se puede hablar de encontrar un valor mínimo en general, pero sí se puede encontrar un conjunto de elementos llamado \textbf{frente de Pareto} formado por los mejores valores encontrados. Con el conjunto de Pareto se decidirá que objetivo es más importante relativo al resto, y se elegirá el valor deseado.
 
 Para entender mejor esto y el algoritmo MOTPE se empezará con algunas definiciones matemáticas que serán relevantes.
 
@@ -231,7 +231,7 @@ Para entender mejor esto y el algoritmo MOTPE se empezará con algunas definicio
 \noindent\textbf{Definición 4} Relación Incomparable entre un vector y un conjunto.  Para un conjunto finito de vectores $Y \subset \mathbb{R}^n$ y un vector $\textbf{y} \in \mathbb{R}^n$, se define que $Y || \textbf{y}$ (equivalente a $\textbf{y}||Y$) si y solo si $\forall \textbf{y'}\in Y_{rango(1)}:\textbf{y}||\textbf{y'}$.\\
 
 
-\noindent \textbf{Definición 5} Óptimo de Pareto. Dada una función $\textbf{f}: X \rightarrow \mathbb{R}^n$, un vector $\textbf{x}\in X$ es óptimo de Pareto si y solo si $\nexists \textbf{x'}\in X: \textbf{f(x')} \prec \textbf{f(x)} $. Un conjunto de vectores óptimos de Pareto $\{ \textbf{x} \in X | \nexists \textbf{x'}\in X: \textbf{f(x')} \prec \textbf{f(x)} \}$ se llama conjunto de Pareto. El conjunto de las imagenes del conjunto de Pareto $\{ \textbf{f(x)} \in \mathbb{R}^n | \textbf{x}\in X \text{es óptimo de Pareto} \}$ se llama frente de Pareto.
+\noindent \textbf{Definición 5} Óptimo de Pareto. Dada una función $\textbf{f}: X \rightarrow \mathbb{R}^n$, un vector $\textbf{x}\in X$ es óptimo de Pareto si y solo si $\nexists \textbf{x'}\in X: \textbf{f(x')} \prec \textbf{f(x)} $. Un conjunto de vectores óptimos de Pareto $\{ \textbf{x} \in X | \nexists \textbf{x'}\in X: \textbf{f(x')} \prec \textbf{f(x)} \}$ se llama conjunto de Pareto. El conjunto de las imágenes del conjunto de Pareto $\{ \textbf{f(x)} \in \mathbb{R}^n | \textbf{x}\in X \text{es óptimo de Pareto} \}$ se llama frente de Pareto.
 
 
 %\noindent \textbf{Definición 7} Indicador de hipervolumen. Sea $\lambda(S)$ la medida de Lebesgue (que en $\mathbb{R}^2$ coincide con una medida de área) de un conjunto medible $S$, el indicador de hipervolumen $I_H$ de un conjunto finito de vectores $Y \subset \mathbb{R}^n$ con un punto de referencia $\textbf{r} \in \mathbb{R}^n$ se define como:

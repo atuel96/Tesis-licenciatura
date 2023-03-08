@@ -13,9 +13,9 @@ Luego, en la segunda sección se ampliará con el refinamiento hp \textit{greedy
 El objetivo de este método es obtener una base que represente un espacio de soluciones de forma aproximada, evitando tener que resolver el problema completo múltiples veces para generar más soluciones. 
 En este contexto las soluciones son ondas gravitacionales y resolver el problema consistiría en obtener soluciones a partir de relatividad numérica.
 
-Las bases reducidas son un método de expansión espectral así como la expansión de Fourier o los ponimonios de Jacobi. La diferencia de este método es que los elementos de la base serán soluciones del espacio que se quiere aproximar (no necesariamente funciones trigonométricas o polinomios, como en otros métodos).
+Las bases reducidas son un método de expansión espectral así como la expansión de Fourier o los polinomios de Jacobi. La diferencia de este método es que los elementos de la base serán soluciones del espacio que se quiere aproximar (no necesariamente funciones trigonométricas o polinomios, como en otros métodos).
 
-Partiendo de un espacio de soluciones $\mathcal{F}:= \{ h_{\lambda} = h_{\lambda}(t) = h(\lambda, t)\}$, donde $h_{\lambda}$ representa una onda gravitacional parametrizada por $\lambda$, que generalmente es multidimensional y puede representar la relación entre las masas de los agujeros negros o los espínes, por ejemplo.
+Partiendo de un espacio de soluciones $\mathcal{F}:= \{ h_{\lambda} = h_{\lambda}(t) = h(\lambda, t)\}$, donde $h_{\lambda}$ representa una onda gravitacional parametrizada por $\lambda$, que generalmente es multidimensional y puede representar la relación entre las masas de los agujeros negros o los espines, por ejemplo.
 
 Para construir la base se parte de un conjunto de entrenamiento $\mathcal{T} := \{\lambda_i, h_{\lambda_i}\}_{i=1}^N$, resultado de un muestreo $\mathcal{K} := \{h_{\lambda_i}\}_{i=1}^n$de $\mathcal{F}$, y que contiene la información del conjunto de parámetros $\{\lambda_i\}_{i=1}^n$ utilizado para la construcción de cada función de $\mathcal{K}$. A partir de $\mathcal{T}$ se construye una base $\{e_i\}_{i=1}^n$, generalmente con $n << N$. Luego se puede representar $\mathcal{K}$, e incluso $\mathcal{F}$ con la combinación lineal
 
@@ -155,7 +155,7 @@ En la figura \ref{fig:rb_vs_n} se puede ver el decaimiento exponencial del error
 
 \section{Bases Reducidas hp Greedy}
 
-El nombre del método hp greedy \cite{Cerino:2022dhr} viene de la combinación del \textit{``refinamiento p''} y del \textit{``refinamiento h"}. El \textit{refinamiento p} proviene de los métodos espectrales con bases polinomiales \cite{hesthaven_gottlieb_gottlieb_2007} y se refiere a la propiedad de que el error de representación disminuye al aumentar el grado del polinomio (en el caso de las bases reducidas aumenta el número de elementos en la base). Por otro lado el término de \textit{refinamiento h} se toma prestado de los métodos de diferencias finitas, donde el tamaño de cada celda de la grilla es representado por \textit{h}. En este caso el refinamiento ocurre en el espacio de los parámetros (y no en el dominio físico).
+El nombre del método \textit{hp-greedy} \cite{Cerino:2022dhr} viene de la combinación del \textit{``refinamiento p''} y del \textit{``refinamiento h"}. El \textit{refinamiento p} proviene de los métodos espectrales con bases polinomiales \cite{hesthaven_gottlieb_gottlieb_2007} y se refiere a la propiedad de que el error de representación disminuye al aumentar el grado del polinomio (en el caso de las bases reducidas aumenta el número de elementos en la base). Por otro lado el término de \textit{refinamiento h} se toma prestado de los métodos de diferencias finitas, donde el tamaño de cada celda de la grilla es representado por \textit{h}. En este caso el refinamiento ocurre en el espacio de los parámetros (y no en el dominio físico).
 
 \subsection{Refinamiento h}
 
@@ -186,7 +186,7 @@ Luego, para cada parámetro del conjunto $\lambda_V$ se evalúa su distancia a l
 d(\lambda_1, \lambda_2) = ||\lambda_1 - \lambda_2||_2,
 \]
 
-de forma que se obtengan dos conjuntos; $\lambda_{V_1}$ con los $\lambda_{i}$ más proximos a $\hat{\Lambda}_{V_1}$, y $\lambda_{V_2}$ con los $\lambda_{i}$ más proximos a $\hat{\Lambda}_{V_2}$, tal que  $\lambda_{V} =\lambda_{V_1} \cup \lambda_{V_2}$. Este resultado es la división del espacio de parámetros a partir de los puntos de anclaje.
+de forma que se obtengan dos conjuntos; $\lambda_{V_1}$ con los $\lambda_{i}$ más próximos a $\hat{\Lambda}_{V_1}$, y $\lambda_{V_2}$ con los $\lambda_{i}$ más próximos a $\hat{\Lambda}_{V_2}$, tal que  $\lambda_{V} =\lambda_{V_1} \cup \lambda_{V_2}$. Este resultado es la división del espacio de parámetros a partir de los puntos de anclaje.
 
 \begin{algorithm}
 \caption{\texttt{Partition}\((\lambda_V, \hat{\Lambda}_{V_1}, \hat{\Lambda}_{V_2})\)}\label{alg:part}
@@ -212,7 +212,7 @@ de forma que se obtengan dos conjuntos; $\lambda_{V_1}$ con los $\lambda_{i}$ m�
 \subsection{Refinamiento hp-greedy}
 
 
-El refinamiento hp-greedy es un método que combina el algoritmo greedy para la construcción de bases reducidas con la partición del dominio de parámetros. 
+El refinamiento \textit{hp-greedy} es un método que combina el algoritmo greedy para la construcción de bases reducidas con la partición del dominio de parámetros. 
 
 Esta partición recursiva del dominio de parámetros da lugar a una estructura de árbol binario, la cual tendrá diferentes niveles $l$ de profundidad, con un $l_{max}$ establecido por el usuario, de forma que $l : 0 \le l \le l_{max}$, donde $l =0$ es el nodo raíz. Cada nodo del árbol estará etiquetado por un conjunto de índices $B_l$, que parte de:
 
@@ -318,7 +318,7 @@ En la figura \ref{fig:t_grilla_nl} se puede ver el tiempo de proyección para m�
 
 \begin{itemize}
 \item \textbf{Independencia aparente entre el tiempo de proyección y $l_{max}$}: para realizar la proyección de cada onda del conjunto de validación en la base \textit{hp-greedy} primero se debe buscar el subdominio (la hoja) correspondiente utilizando los puntos de anclaje de la estructura arbórea de la base. Luego se proyectará la onda en la base local del subdominio en cuestión. Si bien la búsqueda en el árbol tiene una complejidad temporal $O(l_{max})$, el trabajo de cómputo más importante es el que se realizará al momento de proyectar la base, que es independiente de $l_{max}$, con una complejidad temporal $O(n_{max})$. Pero esto solo se cumple hasta ciertos valores de $l_{max}$.
-\item \textbf{Disminución del tiempo de proyección al aumentar $l_{max}$}: ya se mencionó en más de una ocasión que por cada nivel $l$ hay un máximo de $2^l$ subdomínios. Es decir que si se quiere obtener el número de elementos de todas las bases en las hojas del árbol, suponiendo un árbol denso, este número será $n_{max} \times 2^{l_{max}}$. En la figura \ref{fig:t_grilla_nl} se utilizó un conjunto de entrenamiento con 1400 ondas, por lo que al llegar a unos valores de $l_{max} = 6$ y $n_{max} = 24$ en total debería haber 1536 elementos de base en total. Es decir, más elementos de base que ondas en el conjunto de entrenamiento. Por lo tanto al aumentar el $l_{max}$ rápidamente se aumenta el número de subdominios, reduciendo su tamaño como resultado y reduciendo el número de elementos de las bases locales (cada subdominio tendrá una cantidad de elementos menor a $n_{max}$). De esta forma se explica la disminución del tiempo de proyección para valores grandes de $l_{max}$, consecuencia del tamaño limitado del conjunto de entrenamiento.
+\item \textbf{Disminución del tiempo de proyección al aumentar $l_{max}$}: ya se mencionó en más de una ocasión que por cada nivel $l$ hay un máximo de $2^l$ subdominios. Es decir que si se quiere obtener el número de elementos de todas las bases en las hojas del árbol, suponiendo un árbol denso, este número será $n_{max} \times 2^{l_{max}}$. En la figura \ref{fig:t_grilla_nl} se utilizó un conjunto de entrenamiento con 1400 ondas, por lo que al llegar a unos valores de $l_{max} = 6$ y $n_{max} = 24$ en total debería haber 1536 elementos de base en total. Es decir, más elementos de base que ondas en el conjunto de entrenamiento. Por lo tanto al aumentar el $l_{max}$ rápidamente se aumenta el número de subdominios, reduciendo su tamaño como resultado y reduciendo el número de elementos de las bases locales (cada subdominio tendrá una cantidad de elementos menor a $n_{max}$). De esta forma se explica la disminución del tiempo de proyección para valores grandes de $l_{max}$, consecuencia del tamaño limitado del conjunto de entrenamiento.
 \end{itemize}
 
 
@@ -348,7 +348,7 @@ Al cuarto hiperparámetro se le da el nombre de \textit{\textbf{semilla}} y en e
 \end{figure}
 
 \begin{itemize}
-\item $\bm{\hat{\Lambda}_0}$: la semnilla no es más que el primer parámetro \textit{greedy} de la base global. En cada base local, el primer parámetro \textit{greedy} no es relevante, pero en el caso de las bases \textit{hp-greedy} cada semilla dará lugar a una división diferente del dominio de parámetros. En la figura \ref{fig:seeds0} se puede ver como cuatro semillas diferentes dan lugar a cuatro curvas de error con distinta convergencia. En la figura \ref{fig:seeds_part}, por otro lado, se observa el resultado de la partición del dominio para tres semillas diferentes. En general las semillas que mejor funcionan (con el conjunto de datos utilizado) son las que logran una partición regular del dominio de parámetros.
+\item $\bm{\hat{\Lambda}_0}$: la semilla no es más que el primer parámetro \textit{greedy} de la base global. En cada base local, el primer parámetro \textit{greedy} no es relevante, pero en el caso de las bases \textit{hp-greedy} cada semilla dará lugar a una división diferente del dominio de parámetros. En la figura \ref{fig:seeds0} se puede ver como cuatro semillas diferentes dan lugar a cuatro curvas de error con distinta convergencia. En la figura \ref{fig:seeds_part}, por otro lado, se observa el resultado de la partición del dominio para tres semillas diferentes. En general las semillas que mejor funcionan (con el conjunto de datos utilizado) son las que logran una partición regular del dominio de parámetros.
 \end{itemize}
 
 \begin{figure}[h!]

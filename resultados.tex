@@ -26,7 +26,7 @@ Son 16 valores de $n_{max}$, 10 valores de $l_{max}$ y 100 para $q_0$ ($\hat{\La
 En la figura \ref{fig:bench0} se puede ver el resultado de realizar 20 optimizaciones de 100 iteraciones con tres diferentes métodos; búsqueda aleatoria (\textit{random}), TPE y TPE multivariante (los tres métodos están implementados en Optuna \cite{optuna_2019}). En linea oscura se representa la media del mejor error a cada iteración, y la zona sombreada representa los cuartiles. Aparte, en linea de trazo se marca el mejor error obtenido realizando una búsqueda exhaustiva (\textit{grid search}).
 
 
-En las primeras 10 repeticiones los tres métodos son equivalentes, pues para el algoritmo TPE (tanto el normal como el multivariable) se parte de un muestreo aleatorio de 10 observaciones. En la figura \ref{fig:bench0} se ve claramente que luego de las décima iteración se produce el cambio más notorio entre los tres métodos. Gráficamente se puede ver que ambas versiones del algoritmo TPE dan un mejor resultado que la búsqueda aleatoria, pero aparte de esto se pueden utilizar métricas como el \textbf{mejor valor encontrado} para la mediana de $y$ o el \textbf{área bajo la curva} o \textbf{AUC} (\textit{Area Under the Curve})\cite{Dewancker2016ASF}. En la tabla \ref{tab:comp1} están los resultados de estas métricas, considerando solo las últimas 90 iteraciones.
+En las primeras 10 repeticiones los tres métodos son equivalentes, pues para el algoritmo TPE (tanto el normal como el multivariante) se parte de un muestreo aleatorio de 10 observaciones. En la figura \ref{fig:bench0} se ve claramente que luego de las décima iteración se produce el cambio más notorio entre los tres métodos. Gráficamente se puede ver que ambas versiones del algoritmo TPE dan un mejor resultado que la búsqueda aleatoria, pero aparte de esto se pueden utilizar métricas como el \textbf{mejor valor encontrado} para la mediana de $y$ o el \textbf{área bajo la curva} o \textbf{AUC} (\textit{Area Under the Curve})\cite{Dewancker2016ASF}. En la tabla \ref{tab:comp1} están los resultados de estas métricas, considerando solo las últimas 90 iteraciones.
 
 
 \begin{table}
@@ -94,7 +94,7 @@ Por último en la figura \ref{fig:optuna_1d} se puede ver gráficamente el proce
 \label{fig:optuna_2d}
 \end{figure}
 
-Utilizando un conjunto de entrenamiento con 70 valores discretos de $q$ equidistantes en el rango [1, 8] y 20 de $\chi_z$ ($\chi_{z_1} = \chi_{z_2}$) en el rango [-0.8, 0.8], dando lugar a un total de 1400 funciones de onda, se muestran los resultados de optimizar el máximo error de validación utilizando un conjunto de validación con 100 valores para $q$ y 30 vaores para $\chi_z$ con un total de 3000 funciones de onda.
+Utilizando un conjunto de entrenamiento con 70 valores discretos de $q$ equidistantes en el rango [1, 8] y 20 de $\chi_z$ ($\chi_{z_1} = \chi_{z_2}$) en el rango [-0.8, 0.8], dando lugar a un total de 1400 funciones de onda, se muestran los resultados de optimizar el máximo error de validación utilizando un conjunto de validación con 100 valores para $q$ y 30 valores para $\chi_z$ con un total de 3000 funciones de onda.
 
 La optimización se realizó en los siguientes espacios de búsqueda:
  
@@ -155,7 +155,7 @@ Una buena forma de visualizar los resultados es graficando ambos objetivos a la 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=.8\columnwidth, trim={1cm, 1cm, 1cm, 1cm}]{motpe_pareto.pdf}
-\caption{Máximo error de validación versus el tiempo de proytección. Cada punto representa una observación. En color naranja se marca el frente de Pareto.}
+\caption{Máximo error de validación versus el tiempo de proyección. Cada punto representa una observación. En color naranja se marca el frente de Pareto.}
 \label{fig:pareto}
 \end{figure}
 

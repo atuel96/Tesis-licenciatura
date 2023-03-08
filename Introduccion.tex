@@ -32,7 +32,7 @@ Luego, el refinamiento \textit{hp-greedy} es una extensión del método que divi
 
 Sin embargo surge la complejidad añadida por los hiperparámetros necesarios para construir una base \textit{hp-greedy}, los cuales definen como se realizará la división del espacio de parámetros, y por lo tanto cada configuración da lugar a la construcción de una base diferente.
 
-Una base óptima será aquella con una configuración de hiperparámetros que de lugar al menor error de representación a la hora de representar un dado espacio. Por lo que el problema de obtener una base óptima implica obtener una configuración óptima de hiperparámetros, la cual es una tarea complicada y que no se puede resolver por fuerza bruta debido al alto número de configuraciones existentes. Es por esta razón que se decidió utilizar métodos de optimización.
+Una base óptima será aquella con una configuración de hiperparámetros que de lugar al menor error de representación a la hora de proyectar un dado espacio. Por lo que el problema de obtener una base óptima implica obtener una configuración óptima de hiperparámetros, la cual es una tarea complicada y que no se puede resolver por fuerza bruta debido al alto número de configuraciones existentes. Es por esta razón que surge la necesidad de utilizar métodos de optimización.
 
 \subsection*{Optimización Bayesiana}
 
@@ -59,9 +59,9 @@ Los resultados obtenidos fueron favorables, mostrando una clara ventaja de la op
 
 La colisión de dos agujeros negros es uno de los eventos que más energía libera en el universo. Una gran parte de esta energía se libera en forma de ondas gravitacionales \cite{Centrella_2010}. Estas ondas, al igual que las ondas electromagnéticas, son transversales.
 
-Para la representación de una onda gravitacional se utiliza la magnitud $h$ denominada \textit{strain} que es proporcional a la deformación relativa del espacio. Existen tres partes que pueden ser identificadas en la función de onda; \textit{inspiral}, \textit{merger} y \textit{ringdown}. 
+Para la representación de una onda gravitacional se utiliza la magnitud $h$, denominada \textit{strain}, que es proporcional a la deformación relativa del espacio. Existen tres partes que pueden ser identificadas en la función de onda: \textit{inspiral}, \textit{merger} y \textit{ringdown}. 
 
-En la primera etapa (\textit{inspiral}) los dos agujeros negros se orbitan mutuamente durante mucho tiempo, acercandose poco a poco a la vez que sus velocidades aumentan. Eventualmente los agujeros negros se acercan demasiado y se produce la colisión (\textit{merger}), caracterizada por un solo horizonte de eventos. Es aquí dónde se produce el pico de intensidad de la función de onda. Por último, la amplitud disminuye rápidamente con forma similar a una oscilación amortiguada, denotando el final de la colisión (\textit{ringdown}).
+En la primera etapa, (\textit{inspiral}), los dos agujeros negros se orbitan mutuamente durante mucho tiempo, acercándose poco a poco a la vez que sus velocidades aumentan. Eventualmente los agujeros negros se acercan demasiado y se produce la colisión (\textit{merger}), caracterizada por un solo horizonte de eventos. Es aquí dónde se produce el pico de intensidad de la función de onda. Por último, la amplitud disminuye rápidamente con forma similar a una oscilación amortiguada, denotando el final de la colisión (\textit{ringdown}).
 
 Una forma conveniente de expresar una onda gravitacional es a partir de una expansión en los armónicos esféricos con peso en espín $s=-2$, denotados por $\text{ }_{-2} Y^{lm} (\theta, \phi)$:
 \begin{equation}
@@ -87,7 +87,7 @@ El término $\lambda$ se refiere al conjunto de parámetros que define a la onda
 
 \subsection*{Datos Utilizados}
 
-Para esta tésis se utilizaron ondas gravitacionales generadas a partir del modelo híbrido \textit{NRHybSur3dq8}\cite{Varma_2019} que utiliza relativdad numérica y aproximaciones post Newtonianas para colisiones de agujeros negros binarios.
+Para esta tesis se utilizaron ondas gravitacionales generadas a partir del modelo híbrido \textit{NRHybSur3dq8}\cite{Varma_2019} que utiliza relatividad numérica y aproximaciones post Newtonianas para colisiones de agujeros negros binarios.
 \\
 
 Cada onda generada \( h := h(t; \lambda) := h_{\lambda}(t) := h_{\lambda} \), parametrizada por $\lambda$, se representa con una serie temporal compleja de la forma (ver figura \ref{fig:h_q3})
