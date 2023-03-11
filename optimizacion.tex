@@ -1,5 +1,7 @@
 \chapter{Optimización de Hiperparámetros}
 
+
+
 \section{Planteo del Problema}
 
 Sea $f: X \rightarrow \mathbb{R}$ una función que devuelve el máximo error de validación de un modelo entrenado a partir de una combinación de hiperparámetros $\textbf{x} \in X$, se desea encontrar $\hat{\textbf{x}}$:
@@ -96,7 +98,9 @@ En la terminología bayesiana, se conoce a $P(y|\textbf{x})$ como probabilidad a
 
 Una opción muy utilizada para la construcción del \textit{prior} y actualización del \textit{posterior} son los procesos gaussianos. Una forma sencilla de entender un proceso gaussiano es pensarlo como una función que para cada valor de $x$ devuelve la media $\mu(x)$ y la varianza $\sigma(x)$ de una distribución normal, en el caso particular de que $x$ sea unidimensional (ver figura \ref{fig:gaussian}). Con $\textbf{x}$ multidimensional, se obtiene una distribución normal multivariante, caracterizada por el vector $\bm{\mu}(\textbf{x})$ y la matriz de covarianza $\Sigma(\textbf{x}, \textbf{x}')$.
 
-Sin embargo en este trabajo no se utilizan procesos gaussianos, principalmente porque parten del supuesto de que $f$ es continua. Para una introducción a la optimización bayesiana con procesos gaussianos ver \cite{https://doi.org/10.48550/arxiv.1012.2599}.
+Sin embargo en este trabajo no se utilizan procesos gaussianos, principalmente porque parten del supuesto de que $f$ es continua. En su lugar se utiliza el estimador de Parzen con estructura arbórea, que se explicará en la sección \ref{sec:TPE}.
+
+Para una introducción a la optimización bayesiana con procesos gaussianos ver \cite{https://doi.org/10.48550/arxiv.1012.2599}.
 
 \subsection{Mejora Esperada: Función De Adquisición} 
  
@@ -111,6 +115,7 @@ EI_{y^*}(\textbf{x}) := \int_{-\infty}^{\infty} \max(y^*-y,0) p(y|\textbf{x}) \ 
  
 
 \subsection{Estimador de Parzen con Estructura Arbórea} 
+\label{sec:TPE}
 
  El estimador de Parzen con estructura arbórea o \textbf{TPE} (\textit{Tree-Structured Parzen Estimator}) \cite{NIPS2011_86e8f7ab} es una estrategia que modela $P(x_i|y)$ para cada $x_i \in X_i$ (es decir, que $x_i$ representa a cada hiperparámetro por separado) a partir de dos distribuciones creadas a utilizando las observaciones $D$:
 
@@ -194,12 +199,14 @@ Una alternativa al algoritmo \ref{alg:TPE} es el algoritmo \textbf{TPE Multivari
 
 \section{Optimización Multiobjetivo}
 
-En este sección se explicará de forma básica el funcionamiento del algoritmo MOTPE (\textit{Multiobjective Tree-Structured Parzen Estimator}) \cite{10.1613/jair.1.13188, 10.1145/3377930.3389817}, sin entrar en demasiados detalles, pues si bien es un método interesante, se puede conseguir un mejor resultado utilizando el TPE clásico, y limitando el máximo valor de $n_{max}$ permitido. 
+En este sección se explicará de forma básica el funcionamiento del algoritmo MOTPE (\textit{Multiobjective Tree-Structured Parzen Estimator}) \cite{10.1613/jair.1.13188, 10.1145/3377930.3389817}.%, sin entrar en demasiados detalles, pues si bien es un método interesante, se puede conseguir un mejor resultado utilizando el TPE clásico, y limitando el máximo valor de $n_{max}$ permitido. 
 
 \subsection{Planteo del Problema}
 
-Minimizar el error de representación no es el único objetivo posible al momento de construir una base reducida \textit{hp greedy}. También es de mucho interés minimizar el tiempo necesario para proyectar un conjunto de validación más denso a la base ya creada.
-Esto se puede plantear como el problema de minimizar la función $\textbf{f}(\textbf{x})$:
+Minimizar el error de representación no es el único objetivo posible al momento de construir una base reducida \textit{hp greedy}. También es de mucho interés minimizar el tiempo necesario para proyectar un conjunto de validación más denso a la base ya creada. Esto se debe a que se espera que un menor tiempo de proyección de lugar a un modelo más rápido de evaluar, que es el objetivo planteado a largo plazo.
+
+
+Esta optimización se puede plantear como el problema de minimizar la función $\textbf{f}(\textbf{x})$:
 \[
  \min_{\textbf{x} \in X} \textbf{f}(\textbf{x}) := (f_1(\textbf{x}), f_2(\textbf{x}))
 \]

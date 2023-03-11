@@ -123,12 +123,12 @@ En la figura \ref{fig:optuna_2d} se observa la evolución de la optimización re
 
 \subsubsection{Importancia de los Hiperparámetros}
 
-Una vez realizada una optimización se puede estimar la importancia relativa de cada hiperparámetro con el algoritmo fANOVA \cite{pmlr-v32-hutter14}. Básicamente la idea es dividir la varianza total en distintos componentes que representen la varianza producida por cada hiperparámetro. En la figura \ref{fig:param_import} se observa a la izquierda en naranja los resultados para la optimización realizada, y a la derecha en azul se ven los resultados para otro espacio de búsqueda, esta vez con $n_{max} \in \{20, ..., 30\}$  y $l_{max} = \{2, ..., 8\}$ (es decir que se redujo el espacio de búsqueda para $n_{max}$ y $l_{max}$). Se puede ver que la importancia que tienen los hiperparámetros depende claramente del espacio de búsqueda.
+Una vez realizada una optimización se puede estimar la importancia relativa de cada hiperparámetro con el algoritmo fANOVA \cite{pmlr-v32-hutter14}. Básicamente la idea es dividir la varianza total en distintos componentes que representen la varianza producida por cada hiperparámetro. En la figura \ref{fig:param_import} se observa a la izquierda en naranja los resultados para la optimización realizada, y a la derecha en azul se ven los resultados para otro espacio de búsqueda, esta vez con $n_{max} \in \{20, ..., 30\}$  y $l_{max} = \{2, ..., 8\}$ (es decir que se redujo el espacio de búsqueda para $n_{max}$ y $l_{max}$). Se puede ver que la importancia que tienen los hiperparámetros depende claramente del espacio de búsqueda, pero en general se observó que $n_{max}$ y $l_{max}$ suelen tener mayor importancia relativa al resto de hiperparámetros.
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=1\columnwidth, trim={5cm, 2cm, 5cm, 2cm}]{params_importance_full.pdf}
-\caption{Importancia relativa de los hiperparámetros para dos espacios de búsqueda diferentes.}
+\caption{Importancia relativa de los hiperparámetros para dos espacios de búsqueda diferentes. $n_{max}$ y $l_{max}$ suelen ser los hiperparámetros más importantes en la mayoría de los espacios de búsqueda.}
 \label{fig:param_import}
 \end{figure}
 
@@ -160,6 +160,7 @@ Una buena forma de visualizar los resultados es graficando ambos objetivos a la 
 \end{figure}
 
 \subsection{Tiempo de Proyección versus Hiperparámetros}
+\label{sec:corr_t}
 
 \begin{figure}[p]
 \centering
@@ -169,6 +170,14 @@ Una buena forma de visualizar los resultados es graficando ambos objetivos a la 
 \end{figure}
 
 
-La optimización multiobjetivo resulta muy interesante, pero en el contexto de ondas gravitacionales, se observa que hay una gran dependencia entre el tiempo de proyección y $n_{max}$. Mas bien, como se observó en la sección de bases reducidas \textit{hp greedy}, el tiempo de proyección depende casi exclusivamente del valor de $n_{max}$, siempre que el conjunto de entrenamiento sea lo suficientemente denso ($n_{max} \cdot 2^{l_{max}} < N$).
+La optimización multiobjetivo resulta muy interesante, pero en el contexto de ondas gravitacionales, se observa que hay una gran dependencia entre el tiempo de proyección y $n_{max}$. Mas bien, como ya se observó en la figura \ref{fig:t_vs_nmax} de la sección \ref{sec:hp-gw} sobre bases reducidas \textit{hp-greedy}, el tiempo de proyección depende casi exclusivamente del valor de $n_{max}$, siempre que el conjunto de entrenamiento sea lo suficientemente denso ($n_{max} \cdot 2^{l_{max}} < N$).
 
 En la figura \ref{fig:motpe_param_rel} se puede ver la dependencia entre los diferentes hiperparámetros y el tiempo de proyección en segundos, para las observaciones realizadas. Claramente hay una tendencia bastante lineal al considerar $n_{max}$.
+
+Para entender la dependencia entre $n_{max}$ y el tiempo de proyección hay que recordar la ecuación \eqref{eq:coefs} de los coeficientes $c_{i, \lambda}$:
+
+\[
+c_{i, \lambda} = \langle e_i, h_{\lambda} \rangle .
+\]
+
+Para proyectar una función de onda $h_{\lambda}$ a una base reducida se deben calcular los coeficientes $c_{i, \lambda}$, y el número de coeficientes será igual al número de elementos de la base $\{  e_i\}$. Por lo tanto mientras más elementos tengan las bases locales, mayor será el tiempo de proyección.

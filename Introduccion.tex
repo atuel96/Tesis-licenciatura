@@ -30,9 +30,19 @@ Una base reducida se construye mediante un algoritmo voraz o \textit{greedy} que
 
 Luego, el refinamiento \textit{hp-greedy} es una extensión del método que divide iterativamente el espacio de parámetros en distintos subdominios, construyendo bases reducidas locales en lugar de una global. Este refinamiento tiene la ventaja de que permite trabajar con espacios de parámetros que presenten discontinuidades, y además se reduce el tiempo necesario para proyectar un espacio a la base. Esto se traduce en un modelo más rápido y eficiente.
 
-Sin embargo surge la complejidad añadida por los hiperparámetros necesarios para construir una base \textit{hp-greedy}, los cuales definen como se realizará la división del espacio de parámetros, y por lo tanto cada configuración da lugar a la construcción de una base diferente.
 
-Una base óptima será aquella con una configuración de hiperparámetros que de lugar al menor error de representación a la hora de proyectar un dado espacio. Por lo que el problema de obtener una base óptima implica obtener una configuración óptima de hiperparámetros, la cual es una tarea complicada y que no se puede resolver por fuerza bruta debido al alto número de configuraciones existentes. Es por esta razón que surge la necesidad de utilizar métodos de optimización.
+Sin embargo, para la construcción de una base reducida \textit{hp-greedy} surge la complejidad añadida por los hiperparámetros, los cuales definen como se realizará la división del espacio de parámetros, y por lo tanto cada configuración da lugar a la construcción de una base diferente.
+
+\subsection*{Base \textit{hp-greedy} óptima}
+
+
+
+
+
+Partiendo de un espacio de hiperparámetros, una base reducida \textit{hp-greedy} óptima será aquella con la configuración de hiperparámetros que de lugar al menor error de representación a la hora de proyectar un dado espacio. 
+
+
+Por lo que el problema de obtener una base óptima implica obtener una configuración óptima de hiperparámetros, la cual es una tarea complicada y que no se puede resolver por fuerza bruta debido al alto número de configuraciones existentes. Es por esta razón que surge la necesidad de utilizar métodos de optimización.
 
 \subsection*{Optimización Bayesiana}
 
@@ -45,11 +55,11 @@ Particularmente en este trabajo se utilizó el estimador de Parzen con estructur
 
 Los resultados obtenidos fueron favorables, mostrando una clara ventaja de la optimización bayesiana sobre una elección aleatoria de hiperparámetros.
 
+\subsection*{Optimización Multiobjetivo}
 
+Adicionalmente se utilizó un procedimiento que optimizó el tiempo requerido para realizar una proyección a la base \textit{hp-greedy} final (al mismo tiempo que se optimizaba el error de representación).
 
-
-
-
+El tiempo de proyección es el tiempo que tarda en proyectarse una función (o conjunto de funciones) al espacio generado por la base construida. Este segundo objetivo es relevante ya que se espera que un menor tiempo de proyección de lugar a un modelo más rápido de evaluar.
 
 
 

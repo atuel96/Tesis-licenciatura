@@ -62,9 +62,9 @@ d_n := \min_{\{e_i\}_{i=1}^n} \max_{\lambda \in \Omega} || h_{\lambda} - \mathca
 \]
 
 con 
-\[
+\begin{equation}
 \mathcal{P}_nh_{\lambda} = \sum_{i=1}^{n} c_{i,\lambda} e_i(t)
-\]
+\end{equation}
 
 \item $\max_{\lambda \in \Omega}$ hace referencia a que se tiene en cuenta el peor error (el máximo) en el espacio de parámetros $\Omega$. 
 \item Por último $\min_{\{e_i\}_{i=1}^n}$ implica elegir la base óptima que de lugar al \textit{mejor peor error} en el dominio de parámetros.
@@ -80,9 +80,9 @@ La elección de una base óptima es una tarea complicada de complejidad combinat
 Un algoritmo de tipo \textit{greedy} es un proceso iterativo en el cual a cada paso se toma la elección que produzca el mayor beneficio inmediato.
 En el contexto de las bases reducidas, cada iteración del algoritmo agregará un elemento a la base, de forma que el elemento añadido será aquel que daba lugar al peor error de representación dentro del conjunto de entrenamiento $\mathcal{T}$ (de esta forma se reduce el peor error de representación). El error de entrenamiento de una base de dimensión $n$ o ``Error \textit{greedy}", se define como 
 
-\[
+\begin{equation}
 \sigma_n := \max_{\lambda \in  \{ \lambda_{i}\}_{i=1}^N } || h_{\lambda} - \mathcal{P}_nh_{\lambda} ||^2.
-\]
+\end{equation}
 
 También se hablará de un \textit{máximo error de validación}, que es el máximo error de representación que ocurre dentro de un conjunto de validación, generalmente más denso que el conjunto de entrenamiento.
 
@@ -266,6 +266,7 @@ El resultado del algoritmo \ref{alg:hp} es una estructura arbórea, donde cada n
 
 
 \subsection{Aplicación a Ondas Gravitacionales}
+\label{sec:hp-gw}
 
 Se trabaja a partir de un conjunto de ondas gravitacionales con parámetro bidimensional, donde $\chi_{1_z} = \chi_{2_z} = \chi_z$, es decir que $\lambda = (q, \chi_z)$. De esta forma se puede graficar fácilmente el dominio de parámetros.
 

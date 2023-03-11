@@ -1,17 +1,43 @@
-\chapter{Conclusión}
+\chapter{Conclusiones}
 
-Las bases reducidas con refinamiento \textit{hp-greedy} mostraron una clara ventaja con respecto a las bases reducidas globales. Para obtener un mismo error máximo de validación, una base local necesita muchos más elementos, lo que se traduce en un mayor tiempo requerido para proyectar un espacio.
+%%% VIEJAS CONCLUSIONES %%%
 
-El problema de las bases reducidas \textit{hp-greedy}, que no está presente en la construcción de una base reducida global, es la complejidad añadida debido al gran número de configuraciones de hiperparámetros que afectan al rendimiento final. 
+%Las bases reducidas con refinamiento \textit{hp-greedy} mostraron una clara ventaja con respecto a las bases reducidas globales. Para obtener un mismo error máximo de validación, una base local necesita muchos más elementos, lo que se traduce en un mayor tiempo requerido para proyectar un espacio.
 
-%La optimización de hiperparámetros es un problema que ha tenido un gran desarrollo en los últimos años debdio a la necesidad de construir modelos cada vez más complejos dentro del área de aprendizaje supervisado y aprendizaje profundo.
-
-En este trabajó se utilizaron métodos de optimización bayesiana para resolver el problema de la selección de hiperparámetros, y se lograron resultados que cumplieron con las expectativas iniciales. Se observó que para los hiperparámetros más relevantes se necesitaban relativamente pocas iteraciones hasta que alcanzar una convergencia.
-
-También se puso a prueba la optimización por búsqueda aleatoria, con buenos pero inferiores resultados, y se mostró que la búsqueda exhaustiva, si bien garantiza un resultado óptimo, requeriría un tiempo prohibitivo para ser puesta en práctica en un escenario realista.
+%El problema de las bases reducidas \textit{hp-greedy}, que no está presente en la construcción de una base reducida global, es la complejidad añadida debido al gran número de configuraciones de hiperparámetros que afectan al rendimiento final. 
 
 
-Por último,una opción interesante fue la optimización multiobjetivo, que permitió optimizar el error de representación al mismo tiempo que el tiempo de proyección. Sin embargo la gran correlación que hay entre el segundo objetivo y $n_{max}$ hace que el aporte de este método no esté a la altura de la complejidad extra que surge del mismo. Pues para limitar el tiempo de proyección simplemente se limita el máximo valor de $n_{max}$ dentro de la optimización a realizar.
+%En este trabajó se utilizaron métodos de optimización bayesiana para resolver el problema de la selección de hiperparámetros, y se lograron resultados que cumplieron con las expectativas iniciales. Se observó que para los hiperparámetros más relevantes se necesitaban relativamente pocas iteraciones hasta que alcanzar una convergencia.
+
+%También se puso a prueba la optimización por búsqueda aleatoria, con buenos pero inferiores resultados, y se mostró que la búsqueda exhaustiva, si bien garantiza un resultado óptimo, requeriría un tiempo prohibitivo para ser puesta en práctica en un escenario realista.
+
+
+%Por último,una opción interesante fue la optimización multiobjetivo, que permitió optimizar el error de representación al mismo tiempo que el tiempo de proyección. Sin embargo la gran correlación que hay entre el segundo objetivo y $n_{max}$ hace que el aporte de este método no esté a la altura de la complejidad extra que surge del mismo. Pues para limitar el tiempo de proyección simplemente se limita el máximo valor de $n_{max}$ dentro de la optimización a realizar.
+
+
+
+%%% NUEVAS CONCLUSIONES%%%%
+
+
+El problema de las bases reducidas \textit{hp-greedy}, que no está presente en la construcción de una base reducida global, es la complejidad añadida debido al gran número de configuraciones de hiperparámetros que afectan al rendimiento final de la base a la hora de representar un dado espacio. 
+
+Este problema se atacó utilizando métodos de optimización bayesiana, o más especificamente, el algoritmo TPE implementado en la librería optuna. Los resultados de la optimización fueron muy alentadores, con una diferencia de varios ordenes de magnitud entre la primera configuración probada (elegida de forma aleatoria) y la mejor configuración encontrada por el algoritmo. Además se comparó este método con la optimización por búsqueda aleatoria, obteniendo mejores resultados con la optimización bayesiana.
+
+
+Un aspecto negativo que salta a la luz es el incremento en el tiempo necesario para entrenar una base \textit{hp-greedy} teniendo en cuenta el tiempo de optimización. Esto repercutirá directamente en el tiempo necesario para entrenar el modelo predictivo final. Es decir, que si bien se espera construir un modelo más rápido, el tiempo de entrenamiento de este aumentará notablemente.
+
+Por último, la optimización multiobjetivo no resultó de mucho interés en este contexto debido a la gran correlación entre $n_{max}$ y el tiempo de proyección, como se explica en la sección \ref{sec:corr_t}.
+
+
+En conclusión, la optimización de hiperparámetros demostró ser un componente fundamental en la construcción de una base reducida \textit{hp-greedy}, logrando muy buenos resultados aplicando optimización bayesiana, o más específicamente, el algoritmo TPE implementado en Optuna.
+
+\subsection*{Trabajo a Futuro}
+
+%robustez
+Si bien las optimizaciones realizadas mostraron muy buenos resultados, aún se podría investigar la robustez de los hiperparámetros con métodos de análisis de sensibilidad. Una configuración de hiperparámetros puede ser óptima pero inestable, es decir que se pierde la optimalidad al desplazarse un valor tan pequeño como se quiera. Esto no ocurre en el caso de configuraciones que sean óptimas y robustas. Por lo tanto un trabajo a futuro será analizar la robustez de los valores óptimos obtenidos con tests de análisis de sensibilidad.
+
+
+Además, como se mencionó en la introducción, la construcción de bases reducidas constituye solamente el primer paso en la construcción de un modelo sustituto de orden reducido. Por lo tanto aún queda el trabajo de implementar el modelo predictivo final.
 
 
 
