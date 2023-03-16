@@ -190,7 +190,8 @@ $\gamma \in (0,1) $ \Comment{cuantil para obtener $y^*$}
  
 \subsection*{Paralelización}
  
-El algoritmo escrito en Optuna permite paralelizar el proceso de optimización de forma asincrónica; esto se logra utilizando un método llamado \textit{mentiroso constante} (\textit{constant liar}) \cite{NIPS2011_86e8f7ab}. Consiste en que al proponer un valor $\textbf{x}^*$ se asigne temporalmente una evaluación falsa igual al promedio de los valores de $y$ medidos, que luego se actualizará al valor obtenido al momento de finalizar la evaluación real. Este proceso puede hacer la optimización menos eficiente con respecto al número de iteraciones, pero más rápida a fin de cuentas ya que se pueden realizar varias iteraciones a la vez.
+El algoritmo escrito en Optuna permite paralelizar el proceso de optimización de forma asincrónica; esto se logra utilizando un método llamado \textit{mentiroso constante} (\textit{constant liar}) \cite{NIPS2011_86e8f7ab}, el cual consiste en que al proponer un valor $\textbf{x}^*$ se asigne temporalmente una evaluación falsa igual al promedio de los valores de $y$ medidos, que luego se actualizará al valor obtenido al momento de finalizar la evaluación real. Este proceso puede hacer la optimización menos eficiente con respecto al número de iteraciones, pero más rápida a fin de cuentas ya que se pueden realizar varias iteraciones a la vez.
+
  
 \subsubsection*{TPE Multivariante} 
 
