@@ -90,7 +90,7 @@ El término $\lambda$ se refiere al conjunto de parámetros que define a la onda
 Para esta tesis se utilizaron ondas gravitacionales generadas a partir del modelo híbrido \textit{NRHybSur3dq8}\cite{Varma_2019} que utiliza relatividad numérica y aproximaciones post Newtonianas para colisiones de agujeros negros binarios.
 \\
 
-Cada onda generada \( h := h(t; \lambda) := h_{\lambda}(t) := h_{\lambda} \), parametrizada por $\lambda$, se representa con una serie temporal compleja de la forma (ver figura \ref{fig:h_q3})
+Cada solución, es decir, cada onda \( h := h(t; \lambda) := h_{\lambda}(t) := h_{\lambda} \) generada, parametrizada por $\lambda$, se representa con una serie temporal compleja de la forma (ver figura \ref{fig:h_q3})
 \[
 h = h_+ + ih_{\times}
 \]
@@ -103,7 +103,7 @@ En el desarrollo de este trabajo \(\lambda\) tendrá 3 dimensiones relevantes, a
 \item Espín del agujero negro más liviano $\chi_{2_Z}$: $|\chi_{2_Z}| < 0.8$
 \end{itemize}
 
-Y para tener un espacio de parámetros más simple, en todos los casos se trabajó con $\chi_{1_Z} = \chi_{2_Z}$, por lo que se puede hablar directamente del espín $\chi_{Z}=\chi_{1_Z} = \chi_{1_Z}$. Además se trabajó con el modo $(l, m) =(2, 2)$, pero los resultados obtenidos se pueden aplicar a todos los modos por igual (recordar ecuación \eqref{eq:modes}).
+Además para tener un espacio de parámetros más sencillo, en todos los casos se trabajó con $\chi_{1_Z} = \chi_{2_Z}$, por lo que se puede hablar directamente del espín $\chi_{Z}=\chi_{1_Z} = \chi_{1_Z}$. También es importante mencionar que se trabajó únicamente con el modo $(l, m) =(2, 2)$, pero los resultados obtenidos se pueden aplicar a todos los modos por igual (recordar ecuación \eqref{eq:modes}).
 
 \begin{figure}[h]
 \centering
@@ -113,12 +113,13 @@ Y para tener un espacio de parámetros más simple, en todos los casos se trabaj
 \end{figure}
 
 
-
-Se representa un conjunto \( \mathcal{K} \) de N muestras de $\lambda$ de la siguiente forma:
+Se expresará un conjunto de N soluciones con \( \mathcal{K} \), de la siguiente forma:
 
 \[ \mathcal{K}  = \{h_{\lambda_i}\}, \hspace{5mm} i = 1, ..., N\]
 
-y debido a que cada $h_{\lambda_i}$ es una serie temporal, se puede representar $\mathcal{K}$ en forma de la matriz $H \in \mathbb{C}^{N\times L}$:
+Este conjunto genérico puede entenderse como un muestreo de soluciones en el espacio el espacio de parámetros $\lambda$, donde cada elemento es una onda gravitacional.
+
+y debido a que cada $h_{\lambda_i}$ es una serie temporal, $\mathcal{K}$ se puede representar en forma de la matriz $H \in \mathbb{C}^{N\times L}$:
 
 \[
 H = 
@@ -139,9 +140,15 @@ h_{\lambda_N}(t_1) & h_{\lambda_N}(t_2)  & \cdots & h_{\lambda_N}(t_L)
 
 Siendo $L$ la longitud de la serie temporal. De forma que cada fila de $H$ es una onda gravitacional.
 
-También es útil el conjunto de las muestras en el espacio de los parámetros
-$\{ \lambda_i \}_{i=1}^N$. 
-Un conjunto de entrenamiento (o validación) consistirá en el conjunto que contenga cada parámetro $\lambda_i$ junto con su onda parametrizada $h_{\lambda_i}$:
+\subsection*{Conjuntos de Entrenamiento y Validación}
+
+Siguiendo el lenguaje utilizado en aprendizaje automático, se utilizará el concepto de conjunto de entrenamiento y conjunto de validación.
+
+Un conjunto de entrenamiento es aquel que se utiliza para entrenar un algoritmo o modelo, mientras que el de conjunto de validación se utiliza luego del entrenamiento para asignar un puntaje al modelo entrenado. 
+
+%También es útil el conjunto de las muestras en el espacio de los parámetros
+%$\{ \lambda_i \}_{i=1}^N$. 
+Un conjunto de entrenamiento (o validación) consistirá en el conjunto que contenga pares $(\lambda_i, h_{\lambda_i})$, es decir que cada solución $h_{\lambda_i}$ estará acompañada de los parámetros $\lambda_i$ que la generaron:
 
 \[
 \mathcal{T} := \{ \lambda_i, h_{\lambda_i} \}_{i=1}^N

@@ -1,7 +1,8 @@
 \chapter{Teoría de Aproximaciones: Bases Reducidas y Aprendizaje}
 
 
-En la primera sección de este capítulo se dará una introducción a las bases reducidas, un método de aproximación fundamental en el modelado de orden reducido \cite{Tiglio:2021ysj}. Este marco tiene dos etapas bien diferenciadas; por un lado la parte de entrenamiento, que puede ser bastante costosa pero que solo debe realizarse una vez, y después la parte de evaluación, que es mucho más rápida y puede utilizarse múltiples veces.
+En la primera sección de este capítulo se dará una introducción al enfoque de bases reducidas, un método de aproximación fundamental en el modelado de orden reducido \cite{Tiglio:2021ysj}. 
+%Este marco tiene dos etapas bien diferenciadas; por un lado la parte de entrenamiento, que puede ser bastante costosa pero que solo debe realizarse una vez, y después la parte de evaluación, que es mucho más rápida y puede utilizarse múltiples veces.
 Luego, en la segunda sección se ampliará con el refinamiento hp \textit{greedy} \cite{Cerino:2022dhr}; una metodología que descompone de forma iterativa el dominio de parámetros para crear bases reducidas locales de forma adaptativa.
 
 %\section{Aproximación por Proyección}
@@ -10,24 +11,28 @@ Luego, en la segunda sección se ampliará con el refinamiento hp \textit{greedy
 
 \section{Bases Reducidas}
 
-El objetivo de este método es obtener una base que represente un espacio de soluciones de forma aproximada, evitando tener que resolver el problema completo múltiples veces para generar más soluciones. 
-En este contexto las soluciones son ondas gravitacionales y resolver el problema consistiría en obtener soluciones a partir de relatividad numérica.
+El objetivo de este método es obtener una base que represente un espacio de soluciones de forma aproximada pero con alta precisión, evitando tener que resolver el problema completo múltiples veces para generar más soluciones. 
+%En este contexto las soluciones son ondas gravitacionales y resolver el problema consistiría en tener que obtener soluciones costosas utilizando relatividad numérica.
 
-Las bases reducidas son un método de expansión espectral así como la expansión de Fourier o los polinomios de Jacobi. La diferencia de este método es que los elementos de la base serán soluciones del espacio que se quiere aproximar (no necesariamente funciones trigonométricas o polinomios, como en otros métodos).
+Las bases reducidas son un método de expansión espectral, así como la expansión de Fourier o los polinomios de Jacobi. La diferencia de este método es que los elementos de la base serán soluciones del espacio que se quiere aproximar (no necesariamente funciones trigonométricas o polinomios, como en lo otros métodos mencionados).
 
-Partiendo de un espacio de soluciones $\mathcal{F}:= \{ h_{\lambda} = h_{\lambda}(t) = h(\lambda, t)\}$, donde $h_{\lambda}$ representa una onda gravitacional parametrizada por $\lambda$, que generalmente es multidimensional y puede representar la relación entre las masas de los agujeros negros o los espines, por ejemplo.
+Para la construcción de una base reducida se parte de un espacio de soluciones \mbox{$\mathcal{F}:= \{ h_{\lambda} = h_{\lambda}(t) = h(\lambda, t)\}$}, donde $h_{\lambda}$ representa una onda gravitacional parametrizada por $\lambda \in \Omega$, siendo $\Omega$ un dominio compacto de parámetros (cada parámetro $\lambda$ es multidimensional y representa los parámetros mencionados anteriormente, como la relación entre masas o los espines de los agujeros negros).
 
-Para construir la base se parte de un conjunto de entrenamiento $\mathcal{T} := \{\lambda_i, h_{\lambda_i}\}_{i=1}^N$, resultado de un muestreo $\mathcal{K} := \{h_{\lambda_i}\}_{i=1}^n$de $\mathcal{F}$, y que contiene la información del conjunto de parámetros $\{\lambda_i\}_{i=1}^n$ utilizado para la construcción de cada función de $\mathcal{K}$. A partir de $\mathcal{T}$ se construye una base $\{e_i\}_{i=1}^n$, generalmente con $n << N$. Luego se puede representar $\mathcal{K}$, e incluso $\mathcal{F}$ con la combinación lineal
+Se realiza un muestreo de $\mathcal{F}$ y $\Omega$ para construir un conjunto de entrenamiento $\mathcal{T} := \{\lambda_i, h_{\lambda_i}\}_{i=1}^N$ con $N$ elementos. A partir de este conjunto $\mathcal{T}$, se construye una base $\{e_i\}_{i=1}^n$, generalmente con $n << N$, de forma que se pueda generar el conjunto $\{h_{\lambda_i}\}_i^N$, e incluso el espacio $\mathcal{F}$, con la combinación lineal:
+
+%Para construir la base se parte de un conjunto de entrenamiento $\mathcal{T} := \{\lambda_i, h_{\lambda_i}\}_{i=1}^N$, resultado de un muestreo $\mathcal{K} := \{h_{\lambda_i}\}_{i=1}^n$de $\mathcal{F}$, y que contiene la información del conjunto de parámetros $\{\lambda_i\}_{i=1}^n$ utilizado para la construcción de cada función de $\mathcal{K}$. A partir de $\mathcal{T}$ se construye una base $\{e_i\}_{i=1}^n$, generalmente con $n << N$. Luego se puede representar $\mathcal{K}$, e incluso $\mathcal{F}$ con la combinación lineal
 
 \begin{equation}
 \label{eq:rb0}
 h_{\lambda} (t) \approx \sum_{i=1}^{n} c_{i,\lambda} e_i(t).
 \end{equation}
 
+Luego utilizando un conjunto de validación se puede obtener una medida del error o precisión con la que dicha base representa al espacio original.
+
 \subsection{Elección de una base óptima}
 
 %Antes de poder representar $\mathcal{F}$ se necesita encontrar una base óptima dado un error de tolerancia $\varepsilon$ y/o un máximo número de elementos en la base $n_{max}$.
-La pregunta de que tan bien se puede aproximar el espacio $\mathcal{F}$ a partir de una base $\{e_i\}_{i=1}^n$ lleva a la definición de la distancia de Kolmogorov \cite{Pinkus1985nWidthsIA}:
+La pregunta de que tan bien se puede aproximar el espacio $\mathcal{F}$ a partir de una base $\{e_i\}_{i=1}^n$ se puede caracterizar utilizando la definición de la distancia de Kolmogorov \cite{Pinkus1985nWidthsIA}:
 
 \begin{equation} \label{eq:kolmogorov}
 d_n := \min_{\{e_i\}_{i=1}^n} \max_{\lambda \in \Omega} \min_{ c_{i,\lambda} \in \mathbb{C}} \| h_{\lambda} - \sum_{i=1}^{n} c_{i,\lambda} e_i(t)\|^2.
