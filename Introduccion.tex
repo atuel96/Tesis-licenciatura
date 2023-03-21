@@ -12,6 +12,7 @@ La estimación de parámetros se realiza utilizando inferencia Bayesiana \cite{T
 En esta tesis se trabajó dentro del marco de los modelos sustitutos de orden reducido \cite{Field_2014, Tiglio:2021ysj}, una alternativa que logra generar soluciones de alta precisión, comparables a los métodos de relatividad numérica, pero en tiempo real y en una simple computadora portátil. Dentro de este marco se utilizó el enfoque de las bases reducidas \cite{rb0book, doi:10.1137/09075250X, PhysRevLett.106.221102, 10.1115/1.1448332, rb1book}, un método espectral que permite representar un espacio de soluciones a partir de sus $n$ elementos más representativos, de forma que se elimina la información redundante a la hora de representar dicho espacio.
 
 
+
 \subsection*{Objetivo}
 
 En este trabajo se expande el método de bases reducidas con el refinamiento \textit{hp-greedy} \cite{Cerino:2022dhr}, el cual divide iterativamente el espacio de parámetros en distintos subdominios, construyendo bases reducidas locales en lugar de una global, y dando como resultado una estructura de árbol binario.
@@ -28,7 +29,7 @@ El objetivo de esta tesis es encontrar la configuración de hiperparámetros que
 
 Una base reducida \textit{hp-greedy} constituye un sistema de aprendizaje supervisado con numerosas configuraciones de hiperparámetros, cuyo ajuste afecta significativamente el rendimiento del sistema. Por lo tanto, resulta fundamental optimizar la construcción de este sistema.
 
-La optimización bayesiana \cite{7352306, https://doi.org/10.48550/arxiv.1012.2599} se ha convertido en un método de optimización cada vez más utilizado en diferentes áreas de la ciencia de datos, con resultados sobresalientes en el entrenamiento de diversos modelos de aprendizaje automático y aprendizaje profundo. La elección manual de los hiperparámetros de una base reducida \textit{hp-greedy} suele generar resultados mediocres, por lo que es necesario realizar múltiples pruebas para obtener mejoras significativas en el resultado inicial. La optimización bayesiana automatiza este proceso y además cada nueva evaluación tiene en cuenta las evaluaciones realizadas previamente. 
+La optimización bayesiana \cite{7352306, https://doi.org/10.48550/arxiv.1012.2599} se ha convertido en un método de optimización cada vez más utilizado en diferentes áreas de la ciencia de datos, con resultados sobresalientes en el entrenamiento de diversos modelos de aprendizaje automático y aprendizaje profundo (no confundir con la inferencia bayesiana, utilizada para la estimación de parámetros). La elección manual de los hiperparámetros de una base reducida \textit{hp-greedy} suele generar resultados mediocres, por lo que es necesario realizar múltiples pruebas para obtener mejoras significativas en el resultado inicial. La optimización bayesiana automatiza este proceso y además cada nueva evaluación tiene en cuenta las evaluaciones realizadas previamente. 
 
 Particularmente en este trabajo se utilizó el estimador de Parzen con estructura arbórea o \textit{Tree-Parzen Estimator} (TPE), una estrategia popular dentro de la optimización bayesiana, cuyo algoritmo está implementado en la librería Optuna \cite{optuna_2019} \footnote{Ver \url{https://optuna.org/}}. 
 
@@ -153,6 +154,23 @@ Un conjunto de entrenamiento (o validación) consistirá en el conjunto que cont
 \[
 \mathcal{T} := \{ \lambda_i, h_{\lambda_i} \}_{i=1}^N
 \]
+
+\section{Modelos Sustitutos en Ciencia de Ondas Gravitacionales}
+
+Antes de continuar, en esta sección se explica muy brevemente la importancia del uso de modelos sustitutos en la inferencia de parámetros.
+Como se mencionó anteriormente, la inferencia (o estimación) de parámetros se realiza utilizando un método llamado \textbf{inferencia bayesiana} (no confundir con optimización bayesiana). A muy grandes rasgos se puede pensar en un proceso como el que se ejemplifica en la figura \ref{fig:diagrama}, donde la inferencia bayesiana tiene como entrada los resultados de una medición (por ejemplo realizada por el observatorio LIGO), y como salida devuelve el conjunto de parámetros $\lambda_x$ que caracteriza a la onda medida.  
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=.8\columnwidth]{figs/diagrama-importancia-modelos.png}
+\caption{Esquema muy simplificado del proceso de inferencia de parámetros utilizando inferencia bayesiana.}
+\label{fig:diagrama}
+\end{figure}
+
+El problema es que la inferencia bayesiana necesita generar múltiples soluciones en tiempo real, lo que no se puede lograr utilizando métodos de relatividad numérica, que tardan meses en generar una solución. Aquí aparecen los modelos sustitutos, que sustituyen a la relatividad numérica y generan soluciones $h_{\lambda_i}$ para cada conjunto de parámetros $\lambda_i$ requerido para el proceso de inferencia bayesiana.
+
+En esta tesis, como ya se mencionó, se trabaja en optimizar hiperparámetros para la construcción de bases reducidas, que conformarán el núcleo de un modelo sustituto.
+
 
 
 
