@@ -83,18 +83,27 @@ La elección de una base óptima es una tarea complicada de complejidad combinat
 \subsection{Algoritmo \textit{Greedy} para construir una base cuasi-óptima}
 
 Un algoritmo de tipo \textit{greedy} es un proceso iterativo en el cual a cada paso se toma la elección que produzca el mayor beneficio inmediato.
-En el contexto de las bases reducidas, cada iteración del algoritmo agregará un elemento a la base, de forma que el elemento añadido será aquel que daba lugar al peor error de representación dentro del conjunto de entrenamiento $\mathcal{T}$ (de esta forma se reduce el peor error de representación). El error de entrenamiento de una base de dimensión $n$ o ``Error \textit{greedy}", se define como 
+
+En el contexto de las bases reducidas, cada iteración del algoritmo agregará a la base el elemento que daba lugar al peor (máximo) error de representación con la base anterior. Es decir que en cada iteración se reducirá el máximo error de representación de todo el conjunto de entrenamiento.
+
+Para cada solución $h_{\lambda}$ del conjunto de entrenamiento, el error de representación es $\| h_{\lambda} - \mathcal{P}_nh_{\lambda} \|^2$, por lo tanto el máximo error de representación o ``Error \textit{greedy}", se define como :
 
 \begin{equation}
-\sigma_n := \max_{\lambda \in  \{ \lambda_{i}\}_{i=1}^N } || h_{\lambda} - \mathcal{P}_nh_{\lambda} ||^2.
+\sigma_n := \max_{\lambda \in  \{ \lambda_{i}\}_{i=1}^N } \| h_{\lambda} - \mathcal{P}_nh_{\lambda} \|^2.
 \end{equation}
 
-También se hablará de un \textit{máximo error de validación}, que es el máximo error de representación que ocurre dentro de un conjunto de validación, generalmente más denso que el conjunto de entrenamiento.
+Este error es el \textit{error de entrenamiento}, que disminuirá con cada iteración del algoritmo. También se hablará del \textit{error de validación}, que es el máximo error de representación que ocurre dentro de un conjunto de validación, generalmente más denso que el conjunto de entrenamiento.
 
 El proceso de construcción de una base reducida se puede ver en el algoritmo \ref{alg:rb}, y se explica a continuación:
 
 \begin{itemize}
-\item Al algoritmo ingresan un conjunto de entrenamiento $\mathcal{T} = \{ \lambda_{i}, h(\lambda_i) \}_{i=1}^N$ (que incluye tanto las funciones de onda como los parámetros de las funciones), el número máximo de elementos permitidos en la base $n_{max}$, y un mínimo error de tolerancia $\varepsilon$ también llamado \textit{tolerancia greedy}.
+\item Al algoritmo ingresan tres elementos:
+	\begin{itemize}
+	\item [--] Un conjunto de entrenamiento $\mathcal{T} = \{ \lambda_{i}, h(\lambda_i) \}_{i=1}^N$ (que incluye tanto las funciones de onda como los parámetros de las funciones), 
+	\item[--] El número máximo de elementos permitidos en la base $n_{max}$,
+	\item[--] El mínimo error de tolerancia $\varepsilon$ también llamado \textit{tolerancia greedy}.
+	\end{itemize}
+
 \item El primer elemento de la base reducida se elije de forma arbitraria a partir del conjunto de parámetros $\{\lambda_{i}\}_{i=1}^N$. El primer parámetro elegido se llama \textit{semilla} o primer parámetro \textit{greedy} $\Lambda_1$. Luego el primer elemento será $h(\Lambda_1)$, pero normalizado.
 \item Luego iterativamente se agregan nuevos elementos a la base, seleccionando los parámetros que den lugar al mayor error dentro del conjunto de entrenamiento. El conjunto de estos parámetros recibe el nombre de \textit{parámetros greedy}.
 \item Por conveniencia a la hora de realizar proyecciones en el espacio generado por la base, se construye una base ortonormal (de forma que los coeficientes $c_{i,\lambda}$ se obtengan por medio de la ecuación \eqref{eq:coefs}). Para esto se aplica un algoritmo de ortonormalización de Gram-Schmidt (líneas 9 y 10 del algoritmo \ref{alg:rb}).
@@ -160,20 +169,22 @@ En la figura \ref{fig:rb_vs_n} se puede ver el decaimiento exponencial del error
 
 \section{Bases Reducidas hp Greedy}
 
-El nombre del método \textit{hp-greedy} \cite{Cerino:2022dhr} viene de la combinación del \textit{``refinamiento p''} y del \textit{``refinamiento h"}. El \textit{refinamiento p} proviene de los métodos espectrales con bases polinomiales \cite{hesthaven_gottlieb_gottlieb_2007} y se refiere a la propiedad de que el error de representación disminuye al aumentar el grado del polinomio (en el caso de las bases reducidas aumenta el número de elementos en la base). Por otro lado el término de \textit{refinamiento h} se toma prestado de los métodos de diferencias finitas, donde el tamaño de cada celda de la grilla es representado por \textit{h}. En este caso el refinamiento ocurre en el espacio de los parámetros (y no en el dominio físico).
+El nombre del método \textit{hp-greedy} \cite{Cerino:2022dhr} surge de la combinación del \textit{``refinamiento p''} y del \textit{``refinamiento h"}. El \textit{refinamiento p} proviene de los métodos espectrales con bases polinomiales \cite{hesthaven_gottlieb_gottlieb_2007} y se refiere a la propiedad de que el error de representación disminuye al aumentar el grado del polinomio (en el caso de las bases reducidas aumenta el número de elementos en la base). Por otro lado el término de \textit{refinamiento h} se toma prestado de los métodos de diferencias finitas, donde el tamaño de cada celda de la grilla es representado por \textit{h}, y este se refina para obtener un mejor resultado. En el caso de las bases reducidas \textit{hp-greedy} este último refinamiento ocurre en el espacio de los parámetros y no en el dominio físico.
 
 \subsection{Refinamiento h}
 
 Partiendo de la siguiente notación:
 \begin{itemize}
-\item $V$: espacio de parámetros para un dado subdominio $D$.
+\item $V$: espacio de parámetros para un dado subdominio.
+\item $\Omega$: espacio total de parámetros tal que $\Omega= \cup V$.
 \item $V_1, V_2$ : particiones de $V$.
-\item $\Lambda_V$ : parámetros \textit{greedy} para $V$.
+\item $\Lambda_V$ : parámetros \textit{greedy} en $V$.
 \item  $\hat{\Lambda}_{V}$: punto de anclaje para $V$.
 %\item  $\hat{\Lambda}_{V_1}, \hat{\Lambda}_{V_2}$
 \end{itemize}
 
-El refinamiento en el dominio de los parámetros ocurre a partir de la división recursiva de cada subdominio $V$ del dominio total $D$ en dos subdominios $V_1$ y $V_2$. De forma que se obtiene una estructura de árbol binario.
+El refinamiento en el dominio de los parámetros ocurre a partir de la división recursiva de cada subdominio $V \subseteq \Omega$ en dos subdominios $V_1$ y $V_2$. La división de cada dominio $V$ se realizará en función de dos puntos de anclaje $\hat{\Lambda}_{V_1}$ y $\hat{\Lambda}_{V_2}$. Estos puntos de anclaje no son más que los primeros dos elementos del conjunto de parámetros \textit{greedy} $\Lambda_V$.
+Como resultado de estas divisiones iterativas se obtiene una estructura de árbol binario.
 
 
 Esta descomposición binaria del dominio está descrita en forma de pseudocódigo en el algoritmo \ref{alg:part}.
@@ -267,13 +278,38 @@ El método está explicado en el algoritmo \ref{alg:hp}; partiendo de un dado do
 \end{algorithmic}
 \end{algorithm}
 
-El resultado del algoritmo \ref{alg:hp} es una estructura arbórea, donde cada nodo contiene la información de sus puntos de anclaje, por lo que en el caso de querer proyectar un conjunto de validación, cada onda gravitacional se proyectará a la base reducida del nodo hoja con el punto de anclaje más cercano al parámetro de la onda.
+El resultado del algoritmo \ref{alg:hp} es una estructura arbórea, donde cada nodo contiene la información de sus puntos de anclaje, por lo que en el caso de querer proyectar un conjunto de validación, cada onda gravitacional se proyectará a la base reducida del nodo hoja con el punto de anclaje más cercano al parámetro de la onda. En la figura \ref{fig:part_1d} se puede ver un esquema de la división de parámetros para el caso de un $\lambda$ de una sola dimensión. Luego en la figura \ref{fig:proy_1d} se esquematiza el proceso de proyección de una función $h_{\lambda_i}$ a la base creada.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\columnwidth]{figs/particion_parametros_1d.png}
+\caption{Ejemplo de partición del dominio de parametros para un parámetro $\lambda$ unidimensional. Los puntos de colores representan a los parámetros \textit{greedy} $\Lambda_V$ para cada subdominio $V$, resaltando a los puntos de anclaje $\Lambda_V$ con un círculo externo. Este diagrama muestra como se divide cada subdominio en función de sus puntos de anclaje. En este ejemplo $n_{max} = 5$ y $l_{max}=2$.}
+\label{fig:part_1d}
+\end{figure}
+
+\subsection{Tiempo de Proyección}
+
+
+Un aspecto muy importante del refinamiento \textit{hp-greedy}, que se mencionará seguido de ahora en adelante, es el tiempo de proyección a la base. 
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.75\columnwidth]{figs/proyeccion_1d.png}
+\caption{Proyección de una onda $h_{\lambda_i}$ sobre la base de ejemplo de la figura \ref{fig:part_1d} (en este caso $\lambda_i = 8$, marcado con una cruz roja). Partiendo de la raíz del árbol, se calcula iterativamente la distancia entre $\lambda_i$ y los puntos de anclaje de cada subdominio, hasta llegar a alguna de las hojas del árbol.}
+\label{fig:proy_1d}
+\end{figure}
+
+Al momento de proyectar una función $h_{\lambda_i}$ a una base \textit{hp-greedy}, primero se debe obtener la base local del nodo hoja (ver fig. \ref{fig:proy_1d}) y luego se realiza la proyección a la base encontrada.
+Proyectar un conjunto de validación implica repetir este mismo proceso para todas las funciones del conjunto. Este proceso se realizará a lo largo de un tiempo $t$, que se denomina \textit{tiempo de proyección}. 
+
+En el siguiente apartado se analiza el tiempo de proyección en diferentes bases \textit{hp-greedy} en el contexto de ondas gravitacionales.
 
 
 \subsection{Aplicación a Ondas Gravitacionales}
 \label{sec:hp-gw}
 
-Se trabaja a partir de un conjunto de ondas gravitacionales con parámetro bidimensional, donde $\chi_{1_z} = \chi_{2_z} = \chi_z$, es decir que $\lambda = (q, \chi_z)$. De esta forma se puede graficar fácilmente el dominio de parámetros.
+En esta subsección se utiliza un conjunto de ondas gravitacionales con parámetro bidimensional $\lambda = (q, \chi_z)$, donde $\chi_{1_z} = \chi_{2_z} = \chi_z$ es el espín de los agujeros negros y $q$ es la relación entre sus masas. De esta forma se puede graficar fácilmente el dominio de parámetros.
 
 
 
@@ -283,7 +319,7 @@ En la figura \ref{fig:part1} se puede observar una representación de la partici
 \begin{figure}[h!]
 \centering
 \includegraphics[width=1\columnwidth]{figs/particion2d.png}
-\caption{Ejemplo de partición del espacio de parámetros bidimensional para $l_{max}= 1, 2, 3$ y $5$. En los primeros dos casos se muestran los puntos de anclaje.}
+\caption{Ejemplo de partición del espacio de parámetros bidimensional para $l_{max}= 1, 2, 3$ y $5$. En los primeros dos casos se muestran los puntos de anclaje en naranja.}
 \label{fig:part1}
 \end{figure}
 
@@ -298,7 +334,6 @@ En la figure \ref{fig:l0vl4} se compara el máximo error de representación obte
 \end{figure}
 
 
-El aspecto más importante de este método es que permite disminuir la complejidad temporal del algoritmo a la hora de proyectar la base, a cambio de aumentar la complejidad espacial, pues si bien cada subdominio tendrá un máximo de $n_{max}$ elementos en su base, habrá un máximo de $2^{l_{max}}$ subdominios.
 
 \begin{figure}[h!]
 \centering
@@ -320,7 +355,7 @@ En la figura \ref{fig:t_vs_nmax} se graficó el tiempo de proyección de un conj
 \end{figure}
 
 
-En la figura \ref{fig:t_grilla_nl} se puede ver el tiempo de proyección para más valores de $n_{max}$ y ${l_max}$. En los primeros valores de $l_{max}$ se observa un comportamiento similar al descrito anteriormente, donde el tiempo depende casi únicamente de $n_{max}$. Sin embargo al aumentar el $l_{max}$ se observa que el tiempo disminuye. Esto se puede entender en dos partes:
+En la figura \ref{fig:t_grilla_nl} se puede ver el tiempo de proyección para más valores de $n_{max}$ y $l_{max}$. En los primeros valores de $l_{max}$ se observa un comportamiento similar al descrito anteriormente, donde el tiempo depende casi únicamente de $n_{max}$. Sin embargo al aumentar el $l_{max}$ se observa que el tiempo disminuye. Esto se puede entender en dos partes:
 
 \begin{itemize}
 \item \textbf{Independencia aparente entre el tiempo de proyección y $l_{max}$}: para realizar la proyección de cada onda del conjunto de validación en la base \textit{hp-greedy} primero se debe buscar el subdominio (la hoja) correspondiente utilizando los puntos de anclaje de la estructura arbórea de la base. Luego se proyectará la onda en la base local del subdominio en cuestión. Si bien la búsqueda en el árbol tiene una complejidad temporal $O(l_{max})$, el trabajo de cómputo más importante es el que se realizará al momento de proyectar la base, que es independiente de $l_{max}$, con una complejidad temporal $O(n_{max})$. Pero esto solo se cumple hasta ciertos valores de $l_{max}$.
