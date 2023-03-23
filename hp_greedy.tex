@@ -296,7 +296,7 @@ Un aspecto muy importante del refinamiento \textit{hp-greedy}, que se mencionar�
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.75\columnwidth]{figs/proyeccion_1d.png}
-\caption{Proyección de una onda $h_{\lambda_i}$ sobre la base de ejemplo de la figura \ref{fig:part_1d} (en este caso $\lambda_i = 8$, marcado con una cruz roja). Partiendo de la raíz del árbol, se calcula iterativamente la distancia entre $\lambda_i$ y los puntos de anclaje de cada subdominio, hasta llegar a alguna de las hojas del árbol.}
+\caption{Proyección de una onda $h_{\lambda_i}$ sobre la base de ejemplo de la figura \ref{fig:part_1d} (en este caso $\lambda_i = 8$, marcado con una cruz roja). Partiendo de la raíz del árbol, se calcula iterativamente la distancia entre $\lambda_i$ y los puntos de anclaje de cada subdominio, hasta llegar a alguna de las hojas del árbol. El camino seguido se marca en color rojo.}
 \label{fig:proy_1d}
 \end{figure}
 
@@ -357,11 +357,21 @@ En la figura \ref{fig:t_vs_nmax} se graficó el tiempo de proyección de un conj
 
 En la figura \ref{fig:t_grilla_nl} se puede ver el tiempo de proyección para más valores de $n_{max}$ y $l_{max}$. En los primeros valores de $l_{max}$ se observa un comportamiento similar al descrito anteriormente, donde el tiempo depende casi únicamente de $n_{max}$. Sin embargo al aumentar el $l_{max}$ se observa que el tiempo disminuye. Esto se puede entender en dos partes:
 
-\begin{itemize}
-\item \textbf{Independencia aparente entre el tiempo de proyección y $l_{max}$}: para realizar la proyección de cada onda del conjunto de validación en la base \textit{hp-greedy} primero se debe buscar el subdominio (la hoja) correspondiente utilizando los puntos de anclaje de la estructura arbórea de la base. Luego se proyectará la onda en la base local del subdominio en cuestión. Si bien la búsqueda en el árbol tiene una complejidad temporal $O(l_{max})$, el trabajo de cómputo más importante es el que se realizará al momento de proyectar la base, que es independiente de $l_{max}$, con una complejidad temporal $O(n_{max})$. Pero esto solo se cumple hasta ciertos valores de $l_{max}$.
-\item \textbf{Disminución del tiempo de proyección al aumentar $l_{max}$}: ya se mencionó en más de una ocasión que por cada nivel $l$ hay un máximo de $2^l$ subdominios. Es decir que si se quiere obtener el número de elementos de todas las bases en las hojas del árbol, suponiendo un árbol denso, este número será $n_{max} \times 2^{l_{max}}$. En la figura \ref{fig:t_grilla_nl} se utilizó un conjunto de entrenamiento con 1400 ondas, por lo que al llegar a unos valores de $l_{max} = 6$ y $n_{max} = 24$ en total debería haber 1536 elementos de base en total. Es decir, más elementos de base que ondas en el conjunto de entrenamiento. Por lo tanto al aumentar el $l_{max}$ rápidamente se aumenta el número de subdominios, reduciendo su tamaño como resultado y reduciendo el número de elementos de las bases locales (cada subdominio tendrá una cantidad de elementos menor a $n_{max}$). De esta forma se explica la disminución del tiempo de proyección para valores grandes de $l_{max}$, consecuencia del tamaño limitado del conjunto de entrenamiento.
-\end{itemize}
 
+\subsection*{Independencia aparente entre el tiempo de proyección y $l_{max}$}
+Para realizar la proyección de cada onda del conjunto de validación en la base \textit{hp-greedy} primero se debe buscar el subdominio (la hoja) correspondiente utilizando los puntos de anclaje y luego proyectar a la base local encontrada. 
+
+Si bien la búsqueda en el árbol tiene una complejidad temporal $O(l_{max})$, el trabajo de cómputo más importante es el que se realizará al momento de proyectar la base (que es independiente de $l_{max}$) el cual tiene una complejidad temporal $O(n_{max})$. Esto quiere decir que el tiempo requerido para buscar la hoja es mucho menor que el tiempo requerido para proyectar a la base local. Por lo tanto el tiempo de proyección será afectado por $n_{max}$ en mucha mayor medida que por $l_{max}$. Pero esto solo se cumple hasta ciertos valores de $l_{max}$.
+
+\subsection*{Disminución del tiempo de proyección al aumentar $l_{max}$}
+
+La disminución del tiempo de proyección al aumentar el valor de $l_{max}$, que se observa en la figura \ref{fig:t_grilla_nl} es consecuencia de la baja cantidad de elementos en el conjunto de entrenamiento.
+
+Como ya se mencionó anteriormente, por cada nivel $l$ hay un máximo de $2^l$ subdominios, esto implica que si se quiere obtener el número de elementos de todas las bases en las hojas del árbol, suponiendo un árbol denso (todas las bases tiene $n_{max}$ elementos y todas las hojas tienen profundidad $l_{max}$), este número será $n_{max} \times 2^{l_{max}}$. 
+
+En la figura \ref{fig:t_grilla_nl} se utilizó un conjunto de entrenamiento con 1400 ondas, por lo que al llegar a unos valores de $l_{max} = 6$ y $n_{max} = 24$ en total debería haber 1536 elementos entre todas las bases locales de las hojas. Es decir, más elementos de base que ondas en el conjunto de entrenamiento. Por lo tanto al aumentar el $l_{max}$ llegará un punto en el que no habrá suficientes elementos en el conjunto de entrenamiento para que cada base local tenga $n_{max}$ elementos. De forma que las bases locales serán cada vez más pequeñas, lo que dará lugar a un tiempo de proyección menor.
+
+%rápidamente se aumenta el número de subdominios, reduciendo su tamaño como resultado y reduciendo el número de elementos de las bases locales (cada subdominio tendrá una cantidad de elementos menor a $n_{max}$). De esta forma se explica la disminución del tiempo de proyección para valores grandes de $l_{max}$, consecuencia del tamaño limitado del conjunto de entrenamiento.
 
 \subsection{Hiperparámetros}
 
@@ -384,17 +394,20 @@ Al cuarto hiperparámetro se le da el nombre de \textit{\textbf{semilla}} y en e
 \begin{figure}[h!]
 \centering
 \includegraphics[width=.8\columnwidth ,trim={1.1cm, 1.1cm, 1.2cm, 1.2cm}]{figs/Semillas_v_nmax_2D.pdf}
-\caption{Error de validación para diferentes semillas.}
+\caption{Error de validación para diferentes semillas $\hat{\Lambda}_0 = (q_0, \chi_{z_0})$.}
 \label{fig:seeds0}
 \end{figure}
 
 \begin{itemize}
-\item $\bm{\hat{\Lambda}_0}$: la semilla no es más que el primer parámetro \textit{greedy} de la base global. En cada base local, el primer parámetro \textit{greedy} no es relevante, pero en el caso de las bases \textit{hp-greedy} cada semilla dará lugar a una división diferente del dominio de parámetros. En la figura \ref{fig:seeds0} se puede ver como cuatro semillas diferentes dan lugar a cuatro curvas de error con distinta convergencia. En la figura \ref{fig:seeds_part}, por otro lado, se observa el resultado de la partición del dominio para tres semillas diferentes. En general las semillas que mejor funcionan (con el conjunto de datos utilizado) son las que logran una partición regular del dominio de parámetros.
+\item $\bm{\hat{\Lambda}_0}$: la semilla no es más que el primer parámetro \textit{greedy} de la base global. En cada base local, el primer parámetro \textit{greedy} no es relevante, pero en el caso de las bases \textit{hp-greedy} cada semilla dará lugar a una división diferente del dominio de parámetros. En la figura \ref{fig:seeds0} se puede ver como cuatro semillas diferentes dan lugar a cuatro curvas de error con distinta convergencia. En la figura \ref{fig:seeds_part}, por otro lado, se observa el resultado de la partición del dominio para tres semillas diferentes. En general las semillas que mejor funcionan (con el conjunto de datos utilizado) son las que logran una partición regular del dominio de parámetros. 
 \end{itemize}
+
+En caso de trabajar con un espacio de parámetros bidimensional la semilla será $\hat{\Lambda}_0 = (q_0, \chi_{z_0})$,  con $q$ la relación entre masas y $\chi_z$ el espín en la dirección $z$. 
 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=1.05\columnwidth ,trim={1.1cm, 1cm, 1cm, 1.2cm}]{figs/3_semillas_particion.png}
-\caption{Partición del espacio de parámetros para tres semillas diferentes; a la izquierda $\hat{\Lambda}_0 = (1.2 \ \ 0.38)$, a la derecha $\hat{\Lambda}_0 = (1.71 \ \ 0.04)$ y al centro $\hat{\Lambda}_0 =(4.55 \ \ -0.8)$.}
+\caption{Partición del espacio de parámetros para tres semillas diferentes; a la izquierda $\hat{\Lambda}_0 = ($1.2$,\  $0.38$)$, a la derecha $\hat{\Lambda}_0 = ($1.71$,\  $0.04$)$ y al centro $\hat{\Lambda}_0 =($4.55$,  -$0.8$)$. Recordar que $\hat{\Lambda}_0 = (q_0, \chi_{z_0})$.}
+% Recordar que $\hat{\Lambda}_0 = (q_0, \Chi_0)$.
 \label{fig:seeds_part}
 \end{figure}
