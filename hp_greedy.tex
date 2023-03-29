@@ -2,25 +2,23 @@
 
 
 En la primera sección de este capítulo se dará una introducción al enfoque de bases reducidas, un método de aproximación fundamental en el modelado de orden reducido \cite{Tiglio:2021ysj}. 
-%Este marco tiene dos etapas bien diferenciadas; por un lado la parte de entrenamiento, que puede ser bastante costosa pero que solo debe realizarse una vez, y después la parte de evaluación, que es mucho más rápida y puede utilizarse múltiples veces.
+
 Luego, en la segunda sección se ampliará con el refinamiento hp \textit{greedy} \cite{Cerino:2022dhr}; una metodología que descompone de forma iterativa el dominio de parámetros para crear bases reducidas locales de forma adaptativa.
 
-%\section{Aproximación por Proyección}
-%Antes de entender las bases reducidas es necesario tener claro como se aproxima un vector o función a un dado espacio.
-%Sea $W_n \mathcal{W}_n$ un espacio vectorial n-dimensional y subespacio de un espacio de Hilbert $\mathcal{H}$
 
 \section{Bases Reducidas}
 
 El objetivo de este método es obtener una base que represente un espacio de soluciones de forma aproximada pero con alta precisión, evitando tener que resolver el problema completo múltiples veces para generar más soluciones. 
-%En este contexto las soluciones son ondas gravitacionales y resolver el problema consistiría en tener que obtener soluciones costosas utilizando relatividad numérica.
+
 
 Las bases reducidas son un método de expansión espectral, así como la expansión de Fourier o los polinomios de Jacobi. La diferencia de este método es que los elementos de la base serán soluciones del espacio que se quiere aproximar (no necesariamente funciones trigonométricas o polinomios, como en lo otros métodos mencionados).
 
-Para la construcción de una base reducida se parte de un espacio de soluciones \mbox{$\mathcal{F}:= \{ h_{\lambda} = h_{\lambda}(t) = h(\lambda, t)\}$}, donde $h_{\lambda}$ representa una onda gravitacional parametrizada por $\lambda \in \Omega$, siendo $\Omega$ un dominio compacto de parámetros (cada parámetro $\lambda$ es multidimensional y representa los parámetros mencionados anteriormente, como la relación entre masas o los espines de los agujeros negros).
+Para la construcción de una base reducida se parte de un espacio de soluciones \mbox{$\mathcal{F}:= \{ h_{\lambda} = h_{\lambda}(t) = h(\lambda, t)\}$}, donde $h_{\lambda}$ representa una onda gravitacional parametrizada por $\lambda \in \Omega$, siendo $\Omega$ un dominio compacto de parámetros. Cada parámetro $\lambda$ es multidimensional y representa los parámetros mencionados anteriormente, como la relación entre masas o los espines de los agujeros negros. En la Figura \ref{fig:visual_rb} a) se representa un espacio $\Omega$ de dos dimensiones.
 
-Se realiza un muestreo de $\mathcal{F}$ y $\Omega$ para construir un conjunto de entrenamiento $\mathcal{T} := \{\lambda_i, h_{\lambda_i}\}_{i=1}^N$ con $N$ elementos. A partir de este conjunto $\mathcal{T}$, se construye una base $\{e_i\}_{i=1}^n$, generalmente con $n << N$, de forma que se pueda generar el conjunto $\{h_{\lambda_i}\}_i^N$, e incluso el espacio $\mathcal{F}$, con la combinación lineal:
+Luego se realiza un muestreo de $\mathcal{F}$ y $\Omega$ para construir un conjunto de entrenamiento $\mathcal{T} := \{\lambda_i, h_{\lambda_i}\}_{i=1}^N$ con $N$ elementos. En la Figura \ref{fig:visual_rb} b) se representa un muestreo para un $\Omega$ de dos dimensiones, donde cada punto $\lambda_i$ representa a su vez una función $h_{\lambda_i} \in \mathcal{F}$.
 
-%Para construir la base se parte de un conjunto de entrenamiento $\mathcal{T} := \{\lambda_i, h_{\lambda_i}\}_{i=1}^N$, resultado de un muestreo $\mathcal{K} := \{h_{\lambda_i}\}_{i=1}^n$de $\mathcal{F}$, y que contiene la información del conjunto de parámetros $\{\lambda_i\}_{i=1}^n$ utilizado para la construcción de cada función de $\mathcal{K}$. A partir de $\mathcal{T}$ se construye una base $\{e_i\}_{i=1}^n$, generalmente con $n << N$. Luego se puede representar $\mathcal{K}$, e incluso $\mathcal{F}$ con la combinación lineal
+De este conjunto $\mathcal{T}$ se seleccionarán los elementos más representativos para construir una base $\{e_i\}_{i=1}^n$, generalmente con $n << N$, de forma que se pueda generar el conjunto $\{h_{\lambda_i}\}_i^N$, e incluso el espacio $\mathcal{F}$, con la combinación lineal:
+
 
 \begin{equation}
 \label{eq:rb0}
@@ -29,9 +27,19 @@ h_{\lambda} (t) \approx \sum_{i=1}^{n} c_{i,\lambda} e_i(t).
 
 Luego utilizando un conjunto de validación se puede obtener una medida del error o precisión con la que dicha base representa al espacio original.
 
+%EL conjunto de parámetros utilizado para la construcción de la base se representa con $\{ \Lambda_i \}_{i=1}^n$ y se denomina \textit{parámetros greedy}. En la figura \ref{fig:visual_rb} c) se representan los parámetros \textit{greedy} para el caso de ejemplo.
+
+
+\begin{figure}[p!]
+\centering
+\includegraphics[width=.75\columnwidth]{figs/rb_visual.png}
+\caption{a) Representación del espacio $\Omega$. b) Los puntos azules son resultado de un muestro equiespaciado en el espacio $\Omega$, cada punto es un parámetro $\lambda_i$ que representa a una onda $h_{\lambda_i}$. c) Los cuadrados rojos representan a los parámetros \textit{greedy} $\{\Lambda_i\}$, a partir de los cuales se construye la base reducida.}
+\label{fig:visual_rb}
+\end{figure}
+
 \subsection{Elección de una base óptima}
 
-%Antes de poder representar $\mathcal{F}$ se necesita encontrar una base óptima dado un error de tolerancia $\varepsilon$ y/o un máximo número de elementos en la base $n_{max}$.
+
 La pregunta de que tan bien se puede aproximar el espacio $\mathcal{F}$ a partir de una base $\{e_i\}_{i=1}^n$ se puede caracterizar utilizando la definición de la distancia de Kolmogorov \cite{Pinkus1985nWidthsIA}:
 
 \begin{equation} \label{eq:kolmogorov}
@@ -52,7 +60,7 @@ definido a partir del producto interno
 \langle h_1, h_2 \rangle  :=\int_{t_i}^{t_f} \overline{h_{1}}(t) h_2 (t)dt
 \]
 
-Para entender la notación en $d_n$, se explica el signifcado de los $\min$, $\max$, $\min$ de derecha a izquierda:
+Para entender la notación en $d_n$, se explica el significado de los $\min$, $\max$, $\min$ de derecha a izquierda:
 
 \begin{itemize}
 \item $\min_{ c_{i,\lambda} \in \mathbb{C}}$ se refiere a la representación óptima con respecto a la base utilizada. Esto implica realizar una proyección ortogonal a la base. Suponiendo una base ortonormal los coeficientes óptimos serán:
@@ -76,7 +84,7 @@ con
 \end{itemize}
 
 Por lo tanto $d_n$ sirve como un límite superior; es lo mejor que se puede lograr si la base fue escogida de forma óptima.
-En algunos casos $d_n$ se puede calcular teóricamente \cite{MAGARILILYAEV200197}. Más específicamente se puede probar que $d_n \sim n^{-r}$ para funciones con sus primeras $(r-1)$ derivadas continuas y que $d_n \sim e^{-an^b}$ para funciones con una dependencia $C^{\infty}$  \cite{articleg}. En el contexto de ondas gravitacionales se espera un comportamiento asíntotico de convergencia exponencial con $n$ \citep{PhysRevX.4.031006, Herrmann:2012xpx}.
+En algunos casos $d_n$ se puede calcular teóricamente \cite{MAGARILILYAEV200197}. Más específicamente se puede probar que $d_n \sim n^{-r}$ para funciones con sus primeras $(r-1)$ derivadas continuas y que $d_n \sim e^{-an^b}$ para funciones con una dependencia $C^{\infty}$  \cite{articleg}. En el contexto de ondas gravitacionales se espera un comportamiento asintótico de convergencia exponencial con $n$ \citep{PhysRevX.4.031006, Herrmann:2012xpx}.
 
 La elección de una base óptima es una tarea complicada de complejidad combinatoria y no aplicable en la práctica. Por lo tanto se utilizará un acercamiento más eficiente en base al uso de un algoritmo de tipo voraz o \textit{greedy}, que da lugar a una base cuasi-óptima en un sentido matemático, de complejidad lineal. Para más detalles se recomienda ver \cite{Tiglio:2021ysj}.
 
@@ -106,6 +114,8 @@ El proceso de construcción de una base reducida se puede ver en el algoritmo \r
 
 \item El primer elemento de la base reducida se elije de forma arbitraria a partir del conjunto de parámetros $\{\lambda_{i}\}_{i=1}^N$. El primer parámetro elegido se llama \textit{semilla} o primer parámetro \textit{greedy} $\Lambda_1$. Luego el primer elemento será $h(\Lambda_1)$, pero normalizado.
 \item Luego iterativamente se agregan nuevos elementos a la base, seleccionando los parámetros que den lugar al mayor error dentro del conjunto de entrenamiento. El conjunto de estos parámetros recibe el nombre de \textit{parámetros greedy}.
+En la figura \ref{fig:visual_rb} c) se observan en color rojo 5 parámetros \textit{greedy}.
+
 \item Por conveniencia a la hora de realizar proyecciones en el espacio generado por la base, se construye una base ortonormal (de forma que los coeficientes $c_{i,\lambda}$ se obtengan por medio de la ecuación \eqref{eq:coefs}). Para esto se aplica un algoritmo de ortonormalización de Gram-Schmidt (líneas 9 y 10 del algoritmo \ref{alg:rb}).
 \item El algoritmo finaliza cuando se alcanzó el número máximo de elementos en la base $n = n_{max}$, o cuando el máximo error de representación $\sigma_n$ sea menor al error de tolerancia $\varepsilon$, lo que ocurra primero. El algoritmo devuelve los elementos de la base reducida $\{ e_i\}_{i=1}^{n}$, el conjunto de parámetros \textit{greedy} $\{\Lambda_i\}_{i=1}^{n}$ y el error de representación $\sigma_n$.
 \end{itemize}
@@ -157,7 +167,7 @@ d_n \leq D n^{-\alpha} \ \ \rightarrow \ \ \sigma_n \leq D_{\alpha}'n^{-\alpha},
 \]
 con $D$, $\alpha > 0$ y $\gamma \in (0, 1]$.
 
-En la figura \ref{fig:rb_vs_n} se puede ver el decaimiento exponencial del error de representación en función del número de elementos de la base reducida aplicado en el contexto de ondas gravitacionales \cite{Caudill_2012}. Lo más relevante es que se puee ver que este comportamiento no depende de la elección de la raíz; el área sombreada representa los extremos de todas las posibles semillas dentro del conjunto de entrenamiento.
+En la Figura \ref{fig:rb_vs_n} se puede ver el decaimiento exponencial del error de representación en función del número de elementos de la base reducida aplicado en el contexto de ondas gravitacionales \cite{Caudill_2012}. Lo más relevante es que se puede ver que este comportamiento no depende de la elección de la raíz. El área sombreada representa los extremos de todas las posibles semillas dentro del conjunto de entrenamiento.
 
 
 \begin{figure}[h!]
@@ -313,7 +323,7 @@ En esta subsección se utiliza un conjunto de ondas gravitacionales con parámet
 
 
 
-En la figura \ref{fig:part1} se puede observar una representación de la partición del dominio de parámetros. En la primera imagen se pueden ver los dos puntos de anclaje, que son los primeros dos elementos de la base global construida inicialmente. En cada nueva división se construye una nueva base global con la cual se realiza la siguiente partición de cada subdominio.
+En la Figura \ref{fig:part1} se puede observar una representación de la partición del dominio de parámetros. En la primera imagen se pueden ver los dos puntos de anclaje, que son los primeros dos elementos de la base global construida inicialmente. En cada nueva división se construye una nueva base global con la cual se realiza la siguiente partición de cada subdominio.
 
 
 \begin{figure}[h!]
@@ -324,7 +334,7 @@ En la figura \ref{fig:part1} se puede observar una representación de la partici
 \end{figure}
 
 
-En la figure \ref{fig:l0vl4} se compara el máximo error de representación obtenido para un conjunto de validación con una base global, es decir, con $l_{max} = 0$, y con $l_{max}=4$. La velocidad de convergencia es claramente mayor en el segundo caso.
+En la Figura \ref{fig:l0vl4} se compara el máximo error de representación obtenido para un conjunto de validación con una base global, es decir, con $l_{max} = 0$, y con $l_{max}=4$. La velocidad de convergencia es claramente mayor en el segundo caso.
 
 \begin{figure}[h!]
 \centering

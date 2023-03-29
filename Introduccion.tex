@@ -18,7 +18,7 @@ En esta tesis se trabajó dentro del marco de los modelos sustitutos de orden re
 En este trabajo se expande el método de bases reducidas con el refinamiento \textit{hp-greedy} \cite{Cerino:2022dhr}, el cual divide iterativamente el espacio de parámetros en distintos subdominios, construyendo bases reducidas locales en lugar de una global, y dando como resultado una estructura de árbol binario.
 
 La ventaja de este refinamiento está en que las bases locales tienen menor dimensión que la base global, sin que esto implique una pérdida de precisión. Esto se traduce en un modelo más rápido y eficiente de evaluar, pues en lugar de representar una solución proyectándola a la base global, se la proyectará a una de las bases locales (la que corresponda según los parámetros de la solución). 
-Pero junto a esta ventaja se agrega la complejidad de los hiperparámetros que gobiernan la construcción de esta base (por ejemplo, la profundidad máxima del árbol).
+Pero junto a esta ventaja aparece la complejidad añadida por los hiperparámetros, los cuales son parámetros que que gobiernan la construcción de la base \textit{hp-greedy} (por ejemplo, la profundidad máxima del árbol).
 
 
 El objetivo de esta tesis es encontrar la configuración de hiperparámetros que de lugar a una base óptima. Partiendo de un espacio de hiperparámetros, una base reducida \textit{hp-greedy} óptima será aquella con la configuración de hiperparámetros que de lugar al menor error de representación a la hora de proyectar un dado espacio. 
@@ -48,7 +48,7 @@ El tiempo de proyección es el tiempo que tarda en proyectarse una función (o c
 
 \section{Representación de Ondas Gravitacionales}
 
-La colisión de dos agujeros negros es uno de los eventos que más energía libera en el universo. Una gran parte de esta energía se libera en forma de ondas gravitacionales \cite{Centrella_2010}. Estas ondas, al igual que las ondas electromagnéticas, son transversales.
+La colisión de dos agujeros negros es uno de los eventos que más energía libera en el universo. Una gran parte de esta energía se libera en forma de ondas gravitacionales \cite{Centrella_2010}. Estas ondas, al igual que las ondas electromagnéticas, son transversales y viajan a la velocidad de la luz.
 
 Para la representación de una onda gravitacional se utiliza la magnitud $h$, denominada \textit{strain}, que es proporcional a la deformación relativa del espacio. Existen tres partes que pueden ser identificadas en la función de onda: \textit{inspiral}, \textit{merger} y \textit{ringdown}. 
 
@@ -163,7 +163,7 @@ Como se mencionó anteriormente, la inferencia (o estimación) de parámetros se
 \begin{figure}[h!]
 \centering
 \includegraphics[width=.8\columnwidth]{figs/diagrama-importancia-modelos.png}
-\caption{Esquema muy simplificado del proceso de inferencia de parámetros utilizando inferencia bayesiana.}
+\caption{Esquema muy simplificado del proceso de inferencia de parámetros utilizando inferencia bayesiana y modelos sustitutos. El método de inferencia bayesiana necesita generar múltiples soluciones $h_{\lambda_i}$ para diferentes parámetros $\lambda_i$. Estas soluciones son generadas por el modelo sustituto, el cual es capaz de realizar esta tarea en tiempo real.}
 \label{fig:diagrama}
 \end{figure}
 
