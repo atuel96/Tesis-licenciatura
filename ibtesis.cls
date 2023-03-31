@@ -182,7 +182,7 @@
 {      \vskip 4ex \vfill%
       \@laboratorio
       \vskip 3em%
-        Facutlad de Ciencias Exactas y Tecnología\\
+        Facultad de Ciencias Exactas y Tecnología\\
         Universidad Nacional de Tucumán\\
         Argentina
 }    \end{center}\par
