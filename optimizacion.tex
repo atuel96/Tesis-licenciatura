@@ -131,6 +131,7 @@ P(x_i|y) =
 
 Donde las densidades $\ell(x_i)$ y $g(x_i)$ se construyen a partir de dos conjuntos $D_{\ell}$ y $D_g$, ambos subconjuntos de $D$, tal que $D_{\ell}$ contiene todas las observaciones con $y < y^*$, y $D_g$ contiene a todo el resto de forma que $D = D_{\ell} + D_g$. El valor de referencia $y^{*}$ será un valor por encima del mejor valor observado de $f(\textbf{x})$, que se selecciona para ser un cuantil $\gamma \in (0,1)$ de los valores observados $y$ tal que $P(y<y^{*}) = \gamma$.
 
+En pocas palabras, TPE divide el esapcio de hiperparámetros en dos; uno "bueno", representado por $\ell (x_i)$, y otro "malo", representado por $g (x_i)$.
 
 \subsubsection*{Mejora Esperada con TPE}
 Aplicando la ecuación \eqref{eq:tpe} a la definición de mejora esperada \eqref{eq:ei_def} se obtiene la siguiente relación \cite{NIPS2011_86e8f7ab}:
@@ -252,7 +253,16 @@ Para entender mejor esto y el algoritmo MOTPE se empezará con algunas definicio
 
 %\noindent \textbf{Definición 8} Contribución al hipervolumen. Para un conjunto finito de vectores $Y \subset \mathbb{R}^n$ y un vector $\textbf{y} \in Y$, la contribución de $\textbf{y}$ a $Y$ se define como $I_H(Y) - I_H(Y - \{ \textbf{y} \}).$
 
-Lo más importante de esta subsección es entender la relación de dominancia y el concepto del frente de Pareto.
+Lo más importante de esta subsección es entender la relación de dominancia y el concepto del frente de Pareto, que se ilustra en la figura \ref{fig:pareto-fig}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=.8\columnwidth]{figs//pareto-illustration.png}
+\caption{Ilustración del frente de Pareto \cite{qing2014}.}
+\label{fig:pareto-fig}
+\end{figure}
+
+
 
 \subsection{Estimador de Parzen Multiobjetivo con Estructura Arbórea}
 
@@ -271,6 +281,14 @@ P(x_i|\textbf{y}) =
 \end{equation}
 
 con $Y^*$ un conjunto construido tal que $p((\textbf{y} \prec Y^*) \vee (\textbf{y} \| Y^*)) = \gamma$. Nuevamente, $\gamma \in (0,1)$ es un cuantil, y las funciones $\ell(x_i)$ y $g(x_i)$ se construyen utilizando ventanas de Parzen en base a las observaciones realizadas.
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=.6\columnwidth]{figs//tpemo.png}
+\caption{Relación entre $\textbf{y}$ y el conjunto $ Y^*$. Los puntos negros pertenecen a  $Y^*$. La distribución $g(x_i)$ se construye con todos los puntos que caigan en la zona gris, y $\ell(x_i)$ con los puntos de las zonas restantes \cite{10.1613/jair.1.13188}.}
+\label{fig:tpemo}
+\end{figure}
 
 En este caso la función de \textbf{mejora esperada} es un poco más complicada, pero se reduce al mismo resultado que con el TPE clásico; para maximizar la mejora esperada se debe maximizar la relación $\ell(x_i)/g(x_i)$ para cada $x_i$. Para ver en mayor detalle este resultado y el algoritmo completo del método, se recomienda ver \cite{10.1613/jair.1.13188}.
 
