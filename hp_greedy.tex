@@ -365,23 +365,22 @@ En la figura \ref{fig:t_vs_nmax} se graficó el tiempo de proyección de un conj
 \end{figure}
 
 
-En la figura \ref{fig:t_grilla_nl} se puede ver el tiempo de proyección para más valores de $n_{max}$ y $l_{max}$. En los primeros valores de $l_{max}$ se observa un comportamiento similar al descrito anteriormente, donde el tiempo depende casi únicamente de $n_{max}$. Sin embargo al aumentar el $l_{max}$ se observa que el tiempo disminuye. Esto se puede entender en dos partes:
+
+\subsection{Tiempo de Proyección para distintos valores de $n_{max}$ y $l_{max}$}
+
+Para representar una función de onda a partir de una base \textit{hp-greedy} primero se debe buscar el subdominio (la hoja) correspondiente utilizando los puntos de anclaje y luego proyectar la función a la base local encontrada. 
+
+En este proceso, el trabajo de cómputo relevante es la proyección a la base local (que es independiente de $l_{max}$), que involucra calcular $n$ coeficientes para una base local de $n$ elementos. Por lo tanto el tiempo de proyección será afectado por $n_{max}$ en mucha mayor medida que por $l_{max}$. 
+
+En la figura \ref{fig:t_grilla_nl} se puede ver el tiempo de proyección para diferentes valores de $n_{max}$ y $l_{max}$. En los primeros valores de $l_{max}$, con $l_{max} \leq 5$, se observa un comportamiento similar al descrito anteriormente, donde el tiempo depende casi únicamente de $n_{max}$. Sin embargo al aumentar el $l_{max}$ se observa que el tiempo disminuye. 
 
 
-\subsection*{Independencia aparente entre el tiempo de proyección y $l_{max}$}
-Para realizar la proyección de cada onda del conjunto de validación en la base \textit{hp-greedy} primero se debe buscar el subdominio (la hoja) correspondiente utilizando los puntos de anclaje y luego proyectar a la base local encontrada. 
+Este comportamiento es consecuencia de la baja cantidad de elementos en el conjunto de entrenamiento en relación a la cantidad total de elementos en las bases hojas. 
+Suponiendo un árbol denso (todas las bases tienen $n_{max}$ elementos y todas las hojas tienen profundidad $l_{max}$), habrá un total de $n_{max} \times 2^{l_{max}}$ elementos entre todas las hojas. 
 
-Si bien la búsqueda en el árbol tiene una complejidad temporal $O(l_{max})$, el trabajo de cómputo más importante es el que se realizará al momento de proyectar la base (que es independiente de $l_{max}$) el cual tiene una complejidad temporal $O(n_{max})$. Esto quiere decir que el tiempo requerido para buscar la hoja es mucho menor que el tiempo requerido para proyectar a la base local. Por lo tanto el tiempo de proyección será afectado por $n_{max}$ en mucha mayor medida que por $l_{max}$. Pero esto solo se cumple hasta ciertos valores de $l_{max}$.
+Para obtener la Figura \ref{fig:t_grilla_nl} se utilizó un conjunto de entrenamiento con 1400 funciones de onda, por lo que al llegar a unos valores de $l_{max} = 6$ y $n_{max} = 24$ en total debería haber 1536 elementos entre todas las bases locales de las hojas. Es decir, más elementos de base que ondas en el conjunto de entrenamiento. Por lo tanto al aumentar el $l_{max}$ llegará un punto en el que no habrá suficientes elementos en el conjunto de entrenamiento para que cada base local tenga $n_{max}$ elementos. De forma que las bases locales serán cada vez más pequeñas, lo que dará lugar a un tiempo de proyección menor.
 
-\subsection*{Disminución del tiempo de proyección al aumentar $l_{max}$}
 
-La disminución del tiempo de proyección al aumentar el valor de $l_{max}$, que se observa en la figura \ref{fig:t_grilla_nl} es consecuencia de la baja cantidad de elementos en el conjunto de entrenamiento.
-
-Como ya se mencionó anteriormente, por cada nivel $l$ hay un máximo de $2^l$ subdominios, esto implica que si se quiere obtener el número de elementos de todas las bases en las hojas del árbol, suponiendo un árbol denso (todas las bases tiene $n_{max}$ elementos y todas las hojas tienen profundidad $l_{max}$), este número será $n_{max} \times 2^{l_{max}}$. 
-
-En la figura \ref{fig:t_grilla_nl} se utilizó un conjunto de entrenamiento con 1400 ondas, por lo que al llegar a unos valores de $l_{max} = 6$ y $n_{max} = 24$ en total debería haber 1536 elementos entre todas las bases locales de las hojas. Es decir, más elementos de base que ondas en el conjunto de entrenamiento. Por lo tanto al aumentar el $l_{max}$ llegará un punto en el que no habrá suficientes elementos en el conjunto de entrenamiento para que cada base local tenga $n_{max}$ elementos. De forma que las bases locales serán cada vez más pequeñas, lo que dará lugar a un tiempo de proyección menor.
-
-%rápidamente se aumenta el número de subdominios, reduciendo su tamaño como resultado y reduciendo el número de elementos de las bases locales (cada subdominio tendrá una cantidad de elementos menor a $n_{max}$). De esta forma se explica la disminución del tiempo de proyección para valores grandes de $l_{max}$, consecuencia del tamaño limitado del conjunto de entrenamiento.
 
 \subsection{Hiperparámetros}
 
