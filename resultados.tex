@@ -121,6 +121,20 @@ En total se realizaron 500 iteraciones, y el mejor máximo error de validación 
 En la figura \ref{fig:optuna_2d} se observa la evolución de la optimización realizada, que requirió alrededor de 8 horas para completarse. Se puede ver que para cada hiperparámetro se observa una convergencia a cierto valor, pero sin dejar de lado la exploración, es decir, que se siguen evaluando hiperparámetros fuera del rango que parece óptimo, de forma que se evita caer mucho tiempo en mínimos locales.
 
 
+\subsubsection*{Error de Prueba}
+
+Luego de realizar la optimización se puede utilizar un conjunto de prueba, es decir, un conjunto de elementos que no se usaron para el entrenamiento ni para la optimización, para poner a prueba el resultado obtenido.
+
+En este caso, utilizando un conjunto de prueba con 6000 elementos como resultado de un muestreo de 150 valores para $q$ y 40 para $\chi_z$, se calculó el máximo error relativo, siendo:
+
+\[
+error \ relativo = \frac{\| h_{\lambda} - P_n h_{\lambda} \|^2}{\| h_{\lambda} \|^2}
+\]
+
+Como resultado, se obtuvo un máximo error relativo de $3.84 \cdot 10^{-7}$.
+
+
+
 \subsubsection{Importancia de los Hiperparámetros}
 
 Una vez realizada una optimización se puede estimar la importancia relativa de cada hiperparámetro con el algoritmo fANOVA \cite{pmlr-v32-hutter14}. Básicamente la idea es dividir la varianza total en distintos componentes que representen la varianza producida por cada hiperparámetro. En la figura \ref{fig:param_import} se observa a la izquierda en naranja los resultados para la optimización realizada, y a la derecha en azul se ven los resultados para otro espacio de búsqueda, esta vez con $n_{max} \in \{20, ..., 30\}$  y $l_{max} = \{2, ..., 8\}$ (es decir que se redujo el espacio de búsqueda para $n_{max}$ y $l_{max}$). Se puede ver que la importancia que tienen los hiperparámetros depende claramente del espacio de búsqueda, pero en general se observó que $n_{max}$ y $l_{max}$ suelen tener mayor importancia relativa al resto de hiperparámetros.
