@@ -7,9 +7,21 @@ La ciencia de ondas gravitacionales es un área que ha experimentado un rápido 
 Cada observación no solo confirma una de las predicciones más relevantes de las ecuaciones de Einstein, sino que también aporta una gran cantidad de información sobre los fenómenos que las producen. De una onda producida por la colisión de dos agujeros negros se pueden inferir un total de 15 parámetros, de los cuales algunos son \textit{intrínsecos} (como la relación entre las masas o los espines) y otros \textit{extrínsecos} (la distancia del evento, la posición en el cielo, etc.) \cite{Veitch_2015}.
 
 
-La estimación de parámetros se realiza utilizando inferencia Bayesiana \cite{Thrane_2019}, un método que requiere generar funciones de onda para diversos parámetros en tiempo real. Esto es un problema debido a la dificultad que representa resolver las ecuaciones de Einstein; ya que utilizando relatividad numérica se necesitan meses de cómputo para obtener la función de onda producto de una colisión binaria. Debido a que se necesitan varias configuraciones al momento de realizar la inferencia de parámetros, la relatividad numérica no es una opción a la hora de generar las funciones de onda. 
+La estimación de parámetros se realiza utilizando inferencia Bayesiana \cite{Thrane_2019}, un método que requiere generar múltiples funciones de onda para compararlas iterativamente con la onda detectada y así obtener sus parámetros con cada vez más precisión. En un caso ideal, al momento de detectar un evento la inferencia de parámetros daría información suficiente como para poder apuntar distintos telescopios a la posición del evento. De esta forma no solo se obtendría la información de la onda gravitacional, sino también la de las ondas electromagnéticas que puedan ser captadas. 
 
-En esta tesis se trabajó dentro del marco de los modelos sustitutos de orden reducido \cite{Field_2014, Tiglio:2021ysj}, una alternativa que logra generar soluciones de alta precisión, comparables a los métodos de relatividad numérica, pero en tiempo real y en una simple computadora portátil. Dentro de este marco se utilizó el enfoque de las bases reducidas \cite{rb0book, doi:10.1137/09075250X, PhysRevLett.106.221102, 10.1115/1.1448332, rb1book}, un método espectral que permite representar un espacio de soluciones a partir de sus $n$ elementos más representativos, de forma que se elimina la información redundante a la hora de representar dicho espacio.
+El problema surge debido a la dificultad que representa resolver las ecuaciones de Einstein, ya que utilizando relatividad numérica se necesitan meses de cómputo para obtener la función de onda producto de una colisión binaria. Por esta razón en esta tesis se trabajó dentro del marco de los modelos sustitutos de orden reducido \cite{Field_2014, Tiglio:2021ysj}, una alternativa que logra generar soluciones de alta precisión, comparables a los métodos de relatividad numérica, pero en tiempo real (en el orden de los milisegundos) y en una simple computadora portátil. Dentro de este marco se utilizó el enfoque de las bases reducidas \cite{rb0book, doi:10.1137/09075250X, PhysRevLett.106.221102, 10.1115/1.1448332, rb1book}, un método espectral que permite representar un espacio de soluciones a partir de sus $n$ elementos más representativos, de forma que se elimina la información redundante a la hora de representar dicho espacio.
+
+
+
+Los modelos sustitutos son modelos entrenados a partir de datos ya generados por otros medios, como puede ser la relatividad numérica o modelos semi clásicos como las aproximacións post-newtonianas. La Figura \ref{fig:diagrama} esquematiza el rol de los modelos sustitutos en el contexto de la inferencia de parámetros en la ciencia de ondas gravitacionales.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=.8\columnwidth]{figs/diagrama-importancia-modelos.png}
+\caption{Esquema muy simplificado del proceso de inferencia de parámetros utilizando inferencia bayesiana y modelos sustitutos. El método de inferencia bayesiana necesita generar múltiples soluciones $h_{\lambda_i}$ para diferentes parámetros $\lambda_i$. Estas soluciones son generadas por el modelo sustituto, el cual es capaz de realizar esta tarea en tiempo real.}
+\label{fig:diagrama}
+\end{figure}
+
 
 
 
@@ -41,6 +53,8 @@ Los resultados obtenidos fueron favorables, mostrando una clara ventaja de la op
 Adicionalmente se utilizó un procedimiento que optimizó el tiempo requerido para realizar una proyección a la base \textit{hp-greedy} final (al mismo tiempo que se optimizaba el error de representación).
 
 El tiempo de proyección es el tiempo que tarda en proyectarse una función (o conjunto de funciones) al espacio generado por la base construida. Este segundo objetivo es relevante ya que se espera que un menor tiempo de proyección de lugar a un modelo más rápido de evaluar.
+
+
 
 
 
@@ -141,35 +155,26 @@ h_{\lambda_N}(t_1) & h_{\lambda_N}(t_2)  & \cdots & h_{\lambda_N}(t_L)
 
 Siendo $L$ la longitud de la serie temporal. De forma que cada fila de $H$ es una onda gravitacional.
 
-\subsection*{Conjuntos de Entrenamiento y Validación}
+\subsection*{Conjuntos de Entrenamiento, Validación y Prueba}
 
-Siguiendo el lenguaje utilizado en aprendizaje automático, se utilizará el concepto de conjunto de entrenamiento y conjunto de validación.
+Siguiendo el lenguaje utilizado en aprendizaje automático, se utilizará el concepto de conjunto de entrenamiento, conjunto de validación y conjunto de prueba.
 
-Un conjunto de entrenamiento es aquel que se utiliza para entrenar un algoritmo o modelo, mientras que el de conjunto de validación se utiliza luego del entrenamiento para asignar un puntaje al modelo entrenado. 
+Un conjunto de entrenamiento es aquel que se utiliza para entrenar un algoritmo o modelo, mientras que los conjuntos de validación y prueba se utilizan luego del entrenamiento para evaluar el rendimiento del modelo entrenado.
+
+La diferencia entre el conjunto de validación y el conjunto de prueba adquiere significado al momento de realizar una optimización de hiperparámetros. En este proceso el conjunto de validación se utiliza para ajustar los hiperparámetros del modelo y seleccionar la mejor combinación de ellos.
+
+Una vez que se ha seleccionado la mejor combinación de hiperparámetros utilizando el conjunto de validación, se evalúa el modelo resultante en el conjunto de prueba. Es importante destacar que el conjunto de prueba debe ser utilizado solo una vez, para evitar sesgar la evaluación del modelo. En otras palabras, si se ajustan los hiperparámetros utilizando tanto el conjunto de validación como el conjunto de prueba, es posible que se seleccionen hiperparámetros que funcionen bien en el conjunto de prueba pero no en nuevos datos, lo que se conoce como sobreajuste o \textit{overfitting}.
+
+
 
 %También es útil el conjunto de las muestras en el espacio de los parámetros
 %$\{ \lambda_i \}_{i=1}^N$. 
-Un conjunto de entrenamiento (o validación) consistirá en el conjunto que contenga pares $(\lambda_i, h_{\lambda_i})$, es decir que cada solución $h_{\lambda_i}$ estará acompañada de los parámetros $\lambda_i$ que la generaron:
+Un conjunto de entrenamiento (o validación, o prueba) será un conjunto que contenga pares $(\lambda_i, h_{\lambda_i})$, es decir que cada solución $h_{\lambda_i}$ estará acompañada de los parámetros $\lambda_i$ que la generaron:
 
 \[
 \mathcal{T} := \{ \lambda_i, h_{\lambda_i} \}_{i=1}^N
 \]
 
-\section{Modelos Sustitutos en Ciencia de Ondas Gravitacionales}
-
-Antes de continuar, en esta sección se explica muy brevemente la importancia del uso de modelos sustitutos en la inferencia de parámetros.
-Como se mencionó anteriormente, la inferencia (o estimación) de parámetros se realiza utilizando un método llamado \textbf{inferencia bayesiana} (no confundir con optimización bayesiana). A muy grandes rasgos se puede pensar en un proceso como el que se ejemplifica en la figura \ref{fig:diagrama}, donde la inferencia bayesiana tiene como entrada los resultados de una medición (por ejemplo realizada por el observatorio LIGO), y como salida devuelve el conjunto de parámetros $\lambda_x$ que caracteriza a la onda medida.  
-
-\begin{figure}[h!]
-\centering
-\includegraphics[width=.8\columnwidth]{figs/diagrama-importancia-modelos.png}
-\caption{Esquema muy simplificado del proceso de inferencia de parámetros utilizando inferencia bayesiana y modelos sustitutos. El método de inferencia bayesiana necesita generar múltiples soluciones $h_{\lambda_i}$ para diferentes parámetros $\lambda_i$. Estas soluciones son generadas por el modelo sustituto, el cual es capaz de realizar esta tarea en tiempo real.}
-\label{fig:diagrama}
-\end{figure}
-
-El problema es que la inferencia bayesiana necesita generar múltiples soluciones en tiempo real, lo que no se puede lograr utilizando métodos de relatividad numérica, que tardan meses en generar una solución. Aquí aparecen los modelos sustitutos, que sustituyen a la relatividad numérica y generan soluciones $h_{\lambda_i}$ para cada conjunto de parámetros $\lambda_i$ requerido para el proceso de inferencia bayesiana.
-
-En esta tesis, como ya se mencionó, se trabaja en optimizar hiperparámetros para la construcción de bases reducidas, que conformarán el núcleo de un modelo sustituto.
 
 
 
