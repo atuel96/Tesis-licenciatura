@@ -1,44 +1,51 @@
 \chapter{Conclusiones}
 
-%%% VIEJAS CONCLUSIONES %%%
 
-%Las bases reducidas con refinamiento \textit{hp-greedy} mostraron una clara ventaja con respecto a las bases reducidas globales. Para obtener un mismo error máximo de validación, una base local necesita muchos más elementos, lo que se traduce en un mayor tiempo requerido para proyectar un espacio.
+% Motivación
 
-%El problema de las bases reducidas \textit{hp-greedy}, que no está presente en la construcción de una base reducida global, es la complejidad añadida debido al gran número de configuraciones de hiperparámetros que afectan al rendimiento final. 
+La motivación principal de este trabajo está en la construcción de modelos reducidos adaptativos, los cuales son modelos sustitutos precisos y muy rápidos de evaluar. Como resultado de utilizar estos modelos se espera acelerar el proceso de inferencia de parámetros al momento de realizar la detección de una onda gravitacional.  
 
+% Objetivo y hp-greedy
 
-%En este trabajó se utilizaron métodos de optimización bayesiana para resolver el problema de la selección de hiperparámetros, y se lograron resultados que cumplieron con las expectativas iniciales. Se observó que para los hiperparámetros más relevantes se necesitaban relativamente pocas iteraciones hasta que alcanzar una convergencia.
+El trabajo realizado en esta tesis, sin embargo, consiste en la primera etapa de la construcción de un modelo sustituto predictivo. Esta etapa se refiere a la construcción de bases reducidas con refinamiento \textit{hp-greedy}, que resulta en una estructura de árbol binario que divide al espacio de parámetros en varios subdominios. Como resultado, en lugar de tener una base global para un dado espacio, se tienen varias bases locales, cada una asignada a un subdominio del espacio (las hojas del árbol). Esto es deseable porque las bases locales no necesitan tantos elementos como una base global para obtener un mismo error de representación, y esto se traduce en que el tiempo de cómputo necesario para representar un dado espacio se disminuye notablemente. Luego se espera que esto se traduzca a un modelo más rápido de evaluar.
 
-%También se puso a prueba la optimización por búsqueda aleatoria, con buenos pero inferiores resultados, y se mostró que la búsqueda exhaustiva, si bien garantiza un resultado óptimo, requeriría un tiempo prohibitivo para ser puesta en práctica en un escenario realista.
-
-
-%Por último,una opción interesante fue la optimización multiobjetivo, que permitió optimizar el error de representación al mismo tiempo que el tiempo de proyección. Sin embargo la gran correlación que hay entre el segundo objetivo y $n_{max}$ hace que el aporte de este método no esté a la altura de la complejidad extra que surge del mismo. Pues para limitar el tiempo de proyección simplemente se limita el máximo valor de $n_{max}$ dentro de la optimización a realizar.
+% problemática
 
 
+El problema de las bases reducidas \textit{hp-greedy} es que añaden una complejidad extra que no estaba presente en la construcción de las bases reducidas tradicionales. Esta complejidad es la de los hiperparámetros, pues existen múltiples configuraciones de estos que dan lugar a bases con mejor o peor rendimiento.
 
-%%% NUEVAS CONCLUSIONES%%%%
+% Optimización
+
+Este problema se atacó utilizando métodos de optimización bayesiana, o más específicamente, el algoritmo TPE implementado en la librería Optuna, que construye dos densidades de probabilidad en base a las observaciones realizadas, dividiendo el espacio de hiperparámetros en dos; uno ``bueno'' y otro ``malo'' a partir de un error de referencia $y^*$. Luego se maximiza la probabilidad de que la siguiente configuración de hiperparámetros evaluada de lugar a un error por debajo de $y^*$, es decir, que sea una ``buena'' evaluación. De esta forma se reduce la cantidad de configuraciones de hiperparámetros que deberán probarse hasta encontrar un valor óptimo.
+
+% Resultados
+
+Se comparó TPE con métodos clásicos como la búsqueda aleatoria y la búsqueda exhaustiva (\textit{grid search}). Los resultados mostraron que el valor óptimo obtenido con TPE se encuentra en un tiempo dos ordenes de magnitud por debajo que el tiempo de búsqueda exhaustiva en el caso más sencillo, siendo esta diferencia de por lo menos tres ordenes de magnitud en el caso más complejo visto en este trabajo. Esto es una diferencia entre horas y años, por lo que la búsqueda exhaustiva no es una opción viable en los espacios de hiperparámetros medianamente complejos. En el caso de la optimización aleatoria, si bien los resultados no fueron negativos, la velocidad de convergencia al valor óptimo es menor que al usar TPE, debido a que es una búsqueda a ciegas.
 
 
-El problema de las bases reducidas \textit{hp-greedy}, que no está presente en la construcción de una base reducida global, es la complejidad añadida debido al gran número de configuraciones de hiperparámetros que afectan al rendimiento final de la base a la hora de representar un dado espacio. 
+Al comparar la construcción de una base reducida global (tradicional) con la construcción de una base reducida \textit{hp-greedy}, un aspecto negativo que salta a la luz es el incremento en el tiempo necesario para construir esta última teniendo en cuenta el tiempo necesario para la optimización de hiperparámetros. Esto repercutirá directamente en el tiempo necesario para entrenar el modelo predictivo final. Sin embargo, con esto se espera dar lugar a un modelo predictivo mucho más rápido de evaluar, que es justamente lo que se busca conseguir.
 
-Este problema se atacó utilizando métodos de optimización bayesiana, o más especificamente, el algoritmo TPE implementado en la librería Optuna. Los resultados de la optimización fueron muy alentadores, con una diferencia de varios ordenes de magnitud entre la primera configuración probada (elegida de forma aleatoria) y la mejor configuración encontrada por el algoritmo. Además se comparó este método con la optimización por búsqueda aleatoria, obteniendo mejores resultados con la optimización bayesiana.
+% Optimización Multiobjetivo
 
+Por último, la optimización multiobjetivo no resultó de mucho interés en este contexto debido a la gran correlación entre $n_{max}$ y el tiempo de proyección. Este resultado cae dentro de lo esperado, como se explica en la sección \ref{sec:corr_t}.
 
-Un aspecto negativo que salta a la luz es el incremento en el tiempo necesario para entrenar una base \textit{hp-greedy} teniendo en cuenta el tiempo de optimización. Esto repercutirá directamente en el tiempo necesario para entrenar el modelo predictivo final. Es decir, que si bien se espera construir un modelo más rápido, el tiempo de entrenamiento de este aumentará notablemente.
-
-Por último, la optimización multiobjetivo no resultó de mucho interés en este contexto debido a la gran correlación entre $n_{max}$ y el tiempo de proyección, como se explica en la sección \ref{sec:corr_t}.
-
+% Final
 
 En conclusión, la optimización de hiperparámetros demostró ser un componente fundamental en la construcción de una base reducida \textit{hp-greedy}, logrando muy buenos resultados aplicando optimización bayesiana, o más específicamente, el algoritmo TPE implementado en Optuna.
 
 \subsection*{Trabajo a Futuro}
 
-%robustez
-Si bien las optimizaciones realizadas mostraron muy buenos resultados, aún se podría investigar la robustez de los hiperparámetros con métodos de análisis de sensibilidad (los cuales son costosos de evaluar). 
-Una configuración de hiperparámetros puede ser óptima pero inestable, es decir que se pierde la optimalidad al desplazarse un valor tan pequeño como se quiera. Esto no ocurre en el caso de configuraciones que sean óptimas y robustas. Por lo tanto un trabajo a futuro será analizar la robustez de los valores óptimos obtenidos con tests de análisis de sensibilidad.
+% robustez
 
+Si bien las optimizaciones realizadas mostraron muy buenos resultados, aún se podría investigar la robustez de los hiperparámetros con métodos de análisis de sensibilidad (los cuales son costosos de evaluar). Una configuración de hiperparámetros puede ser óptima pero inestable, es decir que se pierde la optimalidad al desplazarse un valor tan pequeño como se quiera. Esto no ocurre en el caso de configuraciones que sean óptimas y robustas. Por lo tanto un trabajo a futuro será analizar la robustez de los valores óptimos obtenidos con tests de análisis de sensibilidad.
 
-Además, como se mencionó en la introducción, la construcción de bases reducidas constituye solamente el primer paso en la construcción de un modelo sustituto de orden reducido. Por lo tanto aún queda el trabajo de implementar el modelo predictivo final.
+% otros métodos
+
+Otro tema de interés es probar otros métodos de optimización fuera del marco de la optimización bayesiana convencional, como son los algoritmos evolutivos o genéticos, o metodologías más modernas como hyperbandid \cite{li_hyperband_2018}.
+
+% Modelo Final
+
+Por último, como se mencionó anteriormente, la construcción de una base reducida \textit{hp-greedy} óptima constituye solamente el primer paso en la construcción de un modelo sustituto capaz de realizar predicciones. Por lo tanto aún queda el trabajo de implementar el modelo final.
 
 
 
