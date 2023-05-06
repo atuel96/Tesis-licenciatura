@@ -148,10 +148,11 @@ Una vez realizada una optimización se puede estimar la importancia relativa de 
 
 
 
-
+\newpage
 \section{Optimización Multiobjetivo}
 
 En esta sección se encuentran los resultados más relevantes de la optimización multiobjetivo, que optimiza el máximo error de evaluación al mismo tiempo que el tiempo necesario para proyectar el conjunto de validación a la base creada.
+
 
 \subsection{Frente de Pareto}
 
@@ -184,7 +185,7 @@ Una buena forma de visualizar los resultados es graficando ambos objetivos a la 
 \end{figure}
 
 
-La optimización multiobjetivo resulta muy interesante, pero en el contexto de ondas gravitacionales, se observa que hay una gran dependencia entre el tiempo de proyección y $n_{max}$. Mas bien, como ya se observó en la figura \ref{fig:t_vs_nmax} de la sección \ref{sec:hp-gw} sobre bases reducidas \textit{hp-greedy}, el tiempo de proyección depende casi exclusivamente del valor de $n_{max}$, siempre que el conjunto de entrenamiento sea lo suficientemente denso ($n_{max} \cdot 2^{l_{max}} < N$).
+La optimización multiobjetivo resulta muy interesante, pero en el contexto de ondas gravitacionales, se observa que hay una gran dependencia entre el tiempo de proyección y $n_{max}$. Mas bien, como ya se observó en la figura \ref{fig:t_vs_nmax} de la sección \ref{sec:hp-gw} sobre bases reducidas \textit{hp-greedy}, el tiempo de proyección depende casi exclusivamente del valor de $n_{max}$, siempre que el conjunto de entrenamiento sea lo suficientemente denso \mbox{($n_{max} \cdot 2^{l_{max}} < N$).}
 
 En la figura \ref{fig:motpe_param_rel} se puede ver la dependencia entre los diferentes hiperparámetros y el tiempo de proyección en segundos, para las observaciones realizadas. Claramente hay una tendencia bastante lineal al considerar $n_{max}$.
 
