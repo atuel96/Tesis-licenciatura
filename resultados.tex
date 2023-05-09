@@ -96,7 +96,7 @@ Por último en la figura \ref{fig:optuna_1d} se puede ver gráficamente el proce
 
 Utilizando un conjunto de entrenamiento con 70 valores discretos de $q$ equidistantes en el rango [1, 8] y 20 de $\chi_z$ ($\chi_{z_1} = \chi_{z_2}$) en el rango [-0.8, 0.8], dando lugar a un total de 1400 funciones de onda, se muestran los resultados de optimizar el máximo error de validación utilizando un conjunto de validación con 100 valores para $q$ y 30 valores para $\chi_z$ con un total de 3000 funciones de onda.
 
-La optimización se realizó en los siguientes espacios de búsqueda:
+La optimización se realizó en el siguiente espacio de búsqueda:
  
 \begin{align*}
 n_{max} &\in \{10, 11, 12, ..., 60\},\\
@@ -107,6 +107,7 @@ X_0 &= \{\chi_{z_0} \ | \ \chi_{z_0} = -0.8 + j \Delta \chi_z, \ j\in \mathbb{N}
 \hat{\Lambda}_0 &\in \{ (q_0, \chi_{z_0}) \ | \ q_0 \in Q_0,\ \chi_{z_0} \in X_0 \}.
 \end{align*}
 
+En este caso hay más de 23 millones de configuraciones posibles.
 
 En total se realizaron 500 iteraciones, y el mejor máximo error de validación obtenido en la iteración número 269 fue de $1{.}45\times 10^{-6}$ con los hiperparámetros:
 
@@ -120,6 +121,17 @@ En total se realizaron 500 iteraciones, y el mejor máximo error de validación 
 
 En la figura \ref{fig:optuna_2d} se observa la evolución de la optimización realizada, que requirió alrededor de 8 horas para completarse. Se puede ver que para cada hiperparámetro se observa una convergencia a cierto valor, pero sin dejar de lado la exploración, es decir, que se siguen evaluando hiperparámetros fuera del rango que parece óptimo, de forma que se evita caer mucho tiempo en mínimos locales.
 
+\subsubsection*{Estimación Tiempo de Búsqueda Exhaustiva}
+
+Teniendo en cuenta que una optimización con 500 iteraciones se realiza en aproximadamente 8 minutos, se puede estimar el tiempo que sería necesario para realizar una búsqueda exhaustiva o \textit{grid search} en este espacio de búsqueda con 23 millones de configuraciones posibles.
+
+\begin{equation}
+t_{grid\ search} \approx \frac{23\ millones\ de\ configuraciones \cdot 8 hs}{500\ configuraciones} = 368000\ hs
+\end{equation}
+
+El resultado sería aproximadamente unas 368 mil horas, o 42 años de cómputo necesarios para realizar la búsqueda exhaustiva. Es decir que en este caso la búsqueda exhaustiva no es una opción a considerar.
+
+Ahora, teniendo en cuenta que una iteración del algoritmo TPE es más costosa que entrenar y evaluar la base (pues en TPE además se modelan las distribuciones de probabilidad), este tiempo realmente sería menor, pero con un factor muy cercano a 1, por lo que las conclusiones de este resultado siguen siendo válidas.
 
 \subsubsection*{Error de Prueba}
 
