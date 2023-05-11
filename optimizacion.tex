@@ -4,33 +4,33 @@
 
 \section{Planteo del Problema}
 
-Sea $f: X \rightarrow \mathbb{R}$ una función que devuelve el máximo error de validación de un modelo entrenado a partir de una combinación de hiperparámetros $\textbf{x} \in X$, se desea encontrar $\hat{\textbf{x}}$:
+Sea $f: X \rightarrow \mathbb{R}$ una función que devuelve el máximo error de validación de un modelo entrenado a partir de una combinación de hiperparámetros $\textbf{x} \in X$, se desea encontrar $\textbf{x}^*$:
 
 \[
 \textbf{x}^* = arg \min_{\textbf{x} \in X} f(\textbf{x})
 \]
 
-Es decir, se busca encontrar la combinación óptima de hiperparámetros dentro de un dominio $X$ para obtener el mínimo error de representación en un dado conjunto de validación. En el caso de la construcción de una base \textit{hp-greedy} óptima: 
+Es decir, se busca encontrar la combinación óptima de hiperparámetros dentro de un dominio $X$ para obtener el mínimo error de representación en un dado conjunto de validación. En el contexto de la construcción de una base \textit{hp-greedy}, cada valor de $\textbf{x}$ representa una configuración de hiperparámetros posible: 
 
 \[
 \textbf{x} = (n_{max}, l_{max}, \varepsilon, \hat{\Lambda}_0).
 \]
 
 
-%El hiperparámetro de mayor interés es sin duda la $semilla$, pues a primera vista no hay una forma obvia de elegir su valor óptimo. Además una semilla óptima para una combinación de $(n_{max_1}, l_{max_1})$ no lo será necesariamente para otra combinación $(n_{max_2}, l_{max_2})$.
+El problema al momento de realizar esta optimización es que la función $f$ no tiene una expresión analítica, sino es que es el resultado de entrenar el modelo y evaluar el error de representación con un conjunto de validación, lo que la hace costosa de evaluar (computacionalmente hablando).
 
-%También se observó que en ciertas situaciones un valor muy elevado de $l_{max}$ o muy pequeño de la $tolerancia$ $greedy$ pueden conducir a un modelo \textit{sobreajustado}. Por esto es de interés realizar una optimización que involucre a la totalidad de los hiperparámetros dentro del dominio $X$. 
+Para solucionar este problema existen varios métodos de optimización. Los dos más conocidos son la \textbf{búsqueda exhaustiva} (o \textit{grid search}), que consiste en probar todos los valores posibles en un dado espacio de búsqueda, y la \textbf{búsqueda aleatoria}, cuyo nombre es suficientemente descriptivo.
 
-El problema al momento de realizar esta optimización es que la función $f$ no tiene una expresión analítica, sino es que es el resultado de entrenar el modelo y evaluar el error de representación con un conjunto de validación, lo que la hace costosa de evaluar (computacionalmente hablando). Este capítulo se centrará principalmente en la \textbf{optimización Bayesiana} \cite{7352306, https://doi.org/10.48550/arxiv.1012.2599}, un método que intenta reducir al mínimo el número de evaluaciones de $f$ para encontrar $\hat{\textbf{x}}$ y se puede colocar dentro de una categoría llamada optimización secuencial basada en modelos, o \textbf{SMBO}\cite{dewancker2015bayesian,NIPS2011_86e8f7ab} (\textit{Secuential Model-Based Optimization}).
+Este capítulo, sin embargo, se centrará principalmente en la \textbf{optimización Bayesiana} \cite{7352306, https://doi.org/10.48550/arxiv.1012.2599}, un método que intenta reducir al mínimo el número de evaluaciones de $f$ para encontrar $\textbf{x}^*$ y se puede colocar dentro de una categoría llamada optimización secuencial basada en modelos, o \textbf{SMBO}\cite{dewancker2015bayesian,NIPS2011_86e8f7ab} (\textit{Secuential Model-Based Optimization}). Más especificamente, el algoritmo de optimización utilizado en esta tesis recibe el nombre de \textbf{Estimador de Parzen con Estructura Arbórea} o \textbf{TPE} (\textit{Tree-Structured Parzen Estimator}) \cite{NIPS2011_86e8f7ab}. Para este trabajo se utilizó la implementación de este algoritmo realizada en el paquete \textbf{\textit{Optuna}} \cite{optuna_2019} escrito en el lenguaje de programación Python.
 
 
-Además existen dos métodos muy utilizados que no utilizan modelos, los cuales son la \textbf{búsqueda exhaustiva} (o \textit{grid search}) y la \textbf{búsqueda aleatoria}. Estos métodos se utilizaron en casos sencillos de optimización para realizar una comparación con la optimización bayesiana.
+Es necesario mencionar que existen además otras alternativas, como pueden ser la programación evolutiva o los algoritmos genéticos, que no serán tratadas en este trabajo.
 
 
 \subsubsection*{Comentario sobre el dominio $X$}
 
 
-Si bien la tolerancia \textit{greedy} $\varepsilon$ puede tomar cualquier valor real no nulo (a diferencia de $n_{max}, l_{max}$ y $\hat{\Lambda}_0$ que toman valores discretos), para simplificar la búsqueda de $\hat{\textbf{x}}$ se utilizaron siempre distribuciones discretas en el espacio logarítmico. Más específicamente se utilizaron conjuntos de la forma $C = \{1\times 10^{t} \  | \ a \leq t \leq b,  t \in {\mathbb{Z}} \}$. De esta forma $X$ será un conjunto finito y estará definido por los valores extremos de cada hiperparámetro. 
+Si bien la tolerancia \textit{greedy} $\varepsilon$ puede tomar cualquier valor real no nulo (a diferencia de $n_{max}, l_{max}$ y $\hat{\Lambda}_0$ que toman valores discretos), para simplificar la búsqueda de $\textbf{x}^*$ se utilizaron siempre distribuciones discretas en el espacio logarítmico. Más específicamente se utilizaron conjuntos de la forma $C = \{1\times 10^{t} \  | \ a \leq t \leq b,  t \in {\mathbb{Z}} \}$. De esta forma $X$ será un conjunto finito y estará definido por los valores extremos de cada hiperparámetro. 
 
 
 \section{Optimización Bayesiana}
@@ -52,9 +52,6 @@ La idea es aproximar la función $f$ a partir de un modelo sustituto $\mathcal{M
 
 Se parte de un conjunto de observaciones $D = \{(\textbf{x}^{(1)},y^{(1)}), \cdots, (\textbf{x}^{(k)},y^{(k)}) \}$, donde $y^{(j)} = f(\textbf{x}^{(j)})$, a partir del cual se ajusta el modelo sustituto $\mathcal{M}$. Luego utilizando las predicciones del modelo se maximiza una función $S$ llamada función de adquisición que elije el siguiente conjunto de hiperparámetros $\textbf{x}_i \in X$ para evaluar la función $f$ y se agrega el par $(\textbf{x}_i, f(\textbf{x}_i))$ al conjunto de observaciones $D$. Una vez hecho esto se vuelve a ajustar el modelo $\mathcal{M}$ y se repite el proceso, que está explicado en forma de pseudocódigo en el algoritmo \ref{alg:SMBO}.
 
-%En la optimización secuencial basada en modelos, cada evaluación de la función $f$ se decide en base a un conjunto $D$ de observaciones realizadas previamente. Esto se logra entrenando un modelo sustituto $\mathcal{M}$ en base al conjunto $D$, y luego utilizando una función $S$ llamada función de \textit{adquisición}, que decidirá el mejor punto a evaluar en la función real.
-
-%Se parte de un conjunto $D = {(\textbf{x}}$ generado a partir de un muestreo de observaciones de la función $f$ de la forma $(\textbf{x}_j, f(\textbf{x}_j))$, a partir del cual se ajusta el modelo sustituto $\mathcal{M}$. Luego, maximizando la función de adquisición $S$ se elije el siguiente conjunto de hiperparámetros $\textbf{x}_i$ para evaluar la función $f$ y se agrega el par $(\textbf{x}_i, f(\textbf{x}_i))$ al conjunto de observaciones $D$. Una vez hecho esto se vuelve a ajustar el modelo $\mathcal{M}$ y se repite el proceso, que está explicado en forma de pseudocódigo en el algoritmo \ref{alg:SMBO}.
 
 
 \begin{algorithm}
