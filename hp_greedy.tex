@@ -90,9 +90,10 @@ La elección de una base óptima es una tarea complicada de complejidad combinat
 
 \subsection{Algoritmo \textit{Greedy} para construir una base cuasi-óptima}
 
-Un algoritmo de tipo \textit{greedy} es un proceso iterativo en el cual a cada paso se toma la elección que produzca el mayor beneficio inmediato.
+Un algoritmo de tipo \textit{greedy} es un proceso iterativo en el cual a cada paso se toma la elección que produzca el mayor beneficio inmediato \footnote{Los algoritmos de tipo \textit{greedy} se usan en muchos contextos, y no están asociados únicamente a la construcción de bases reducidas.}.
 
 En el contexto de las bases reducidas, cada iteración del algoritmo agregará a la base el elemento que daba lugar al peor (máximo) error de representación con la base anterior. Es decir que en cada iteración se reducirá el máximo error de representación de todo el conjunto de entrenamiento.
+
 
 Para cada solución $h_{\lambda}$ del conjunto de entrenamiento, el error de representación es $\| h_{\lambda} - \mathcal{P}_nh_{\lambda} \|^2$, por lo tanto el máximo error de representación o ``Error \textit{greedy}", se define como :
 
