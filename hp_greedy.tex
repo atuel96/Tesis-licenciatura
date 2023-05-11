@@ -3,7 +3,8 @@
 
 En la primera sección de este capítulo se dará una introducción al enfoque de bases reducidas, un método de aproximación fundamental en el modelado de orden reducido \cite{Tiglio:2021ysj}. 
 
-Luego, en la segunda sección se ampliará con el refinamiento hp \textit{greedy} \cite{Cerino:2022dhr}; una metodología que descompone de forma iterativa el dominio de parámetros para crear bases reducidas locales de forma adaptativa.
+Luego, en la segunda sección se ampliará con el refinamiento \textit{hp-greedy} \cite{Cerino:2022dhr}; una metodología que descompone de forma iterativa el dominio de parámetros para crear bases reducidas locales de forma adaptativa.
+
 
 
 \section{Bases Reducidas}
@@ -311,21 +312,17 @@ Un aspecto muy importante del refinamiento \textit{hp-greedy}, que se mencionar�
 \label{fig:proy_1d}
 \end{figure}
 
-Al momento de proyectar una función $h_{\lambda_i}$ a una base \textit{hp-greedy}, primero se debe obtener la base local del nodo hoja (ver fig. \ref{fig:proy_1d}) y luego se realiza la proyección a la base encontrada.
+Al momento de proyectar una función $h_{\lambda_i}$ a una base \textit{hp-greedy}, primero se debe obtener la base local del nodo hoja (ver fig. \ref{fig:proy_1d}) y luego se realiza la proyección a la base local encontrada.
 Proyectar un conjunto de validación implica repetir este mismo proceso para todas las funciones del conjunto. Este proceso se realizará a lo largo de un tiempo $t$, que se denomina \textit{tiempo de proyección}. 
 
-En el siguiente apartado se analiza el tiempo de proyección en diferentes bases \textit{hp-greedy} en el contexto de ondas gravitacionales.
+
+En el siguiente apartado se analiza el tiempo de proyección en diferentes bases \textit{hp-greedy} en el contexto de ondas gravitacionales, y es aquí donde se observará la gran ventaja de este refinamiento. Pues para un mismo error de validación, una base recudida \textit{hp-grredy} requiere menos elementos que una base global, dando como resultado un menor tiempo de proyección, que dará lugar a un modelo más rápido de evaluar.
 
 
 \subsection{Aplicación a Ondas Gravitacionales}
 \label{sec:hp-gw}
 
 En esta subsección se utiliza un conjunto de ondas gravitacionales con parámetro bidimensional $\lambda = (q, \chi_z)$, donde $\chi_{1_z} = \chi_{2_z} = \chi_z$ es el espín de los agujeros negros y $q$ es la relación entre sus masas. De esta forma se puede graficar fácilmente el dominio de parámetros.
-
-
-
-En la Figura \ref{fig:part1} se puede observar una representación de la partición del dominio de parámetros. En la primera imagen se pueden ver los dos puntos de anclaje, que son los primeros dos elementos de la base global construida inicialmente. En cada nueva división se construye una nueva base global con la cual se realiza la siguiente partición de cada subdominio.
-
 
 \begin{figure}[h!]
 \centering
@@ -334,8 +331,7 @@ En la Figura \ref{fig:part1} se puede observar una representación de la partici
 \label{fig:part1}
 \end{figure}
 
-
-En la Figura \ref{fig:l0vl4} se compara el máximo error de representación obtenido para un conjunto de validación con una base global, es decir, con $l_{max} = 0$, y con $l_{max}=4$. La velocidad de convergencia es claramente mayor en el segundo caso.
+En la Figura \ref{fig:part1} se puede observar una representación de la partición del dominio de parámetros. En la primera imagen se pueden ver los dos puntos de anclaje, que son los primeros dos elementos de la base global construida inicialmente. En cada nueva división se construye una nueva base global con la cual se realiza la siguiente partición de cada subdominio.
 
 \begin{figure}[h!]
 \centering
@@ -343,6 +339,9 @@ En la Figura \ref{fig:l0vl4} se compara el máximo error de representación obte
 \caption{Base global ($l_{max} = 0$) versus base con $l_{max} = 4$} para distintos valores de $n$.
 \label{fig:l0vl4}
 \end{figure}
+
+
+En la Figura \ref{fig:l0vl4} se compara el máximo error de representación obtenido para un conjunto de validación con una base global, es decir, con $l_{max} = 0$, y con $l_{max}=4$. La velocidad a la cual disminuye el error es claramente mayor en el caso de la base reducida \textit{hp-greedy}. Es importante notar que para un dado error la base global necesita más elementos que una base \textit{hp-greedy}, por ejemplo para un error de $10^{-2}$ una base \textit{hp-greedy} requiere aproximadamente 20 elementos, mientras que una base global necesita casi 50 elementos. 
 
 
 
@@ -354,8 +353,7 @@ En la Figura \ref{fig:l0vl4} se compara el máximo error de representación obte
 \end{figure}
 
 
-En la figura \ref{fig:t_vs_nmax} se graficó el tiempo de proyección de un conjunto de validación a dos bases \textit{hp-greedy} con distinto valor de $l_{max}$. Se observa que el tiempo es bastante lineal en relación al $n$ (elementos de las bases locales), y no parece ser afectado por $l_{max}$.
-
+En la figura \ref{fig:t_vs_nmax} se graficó el tiempo de proyección de un conjunto de validación a dos bases \textit{hp-greedy} con distinto valor de $l_{max}$. Se observa que el tiempo es bastante lineal en relación al $n$ (elementos de las bases locales), y no parece ser afectado por $l_{max}$. 
 
 
 \begin{figure}[h!]
